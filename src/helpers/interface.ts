@@ -35,6 +35,7 @@ export type Prompt = {
   tag: string;
   image: string;
   rating?: number;
+  clickable?: boolean
 };
 
 export type IPromptEngineer = {

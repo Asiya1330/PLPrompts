@@ -2,15 +2,22 @@ import { PromptsContext } from '@/contexts/PromptsContext'
 import { UserContext } from '@/contexts/UserContext';
 import React, { useContext, useEffect, useState } from 'react'
 import PromptCard from './PromptCard';
+import useRouter from 'next/router'
 
 export default function Prompts() {
     const { prompts } = useContext(PromptsContext);
     const { currentUser } = useContext(UserContext);
     const [myPrompts, setMyPrompts] = useState();
+    const router = useRouter;
+
     useEffect(() => {
-        // if (!currentUser || !currentUser.email) return alert('you need to login first')
+        //@ts-ignore
+        if (!currentUser || !currentUser.email) router.push('/login');
+        console.log(currentUser,'in prompts');
+        
         if (prompts) {
-            const getMyPrompts = prompts.filter((prompt) => prompt.userId === currentUser.id);
+        //@ts-ignore
+            const getMyPrompts = prompts.filter((prompt) => prompt.userId === currentUser._id);
             setMyPrompts(getMyPrompts)
         }
     }, [prompts])
@@ -26,7 +33,8 @@ export default function Prompts() {
             <hr />
             <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
 
-                {myPrompts && myPrompts?.map(({ name, price, type, images }: any, idx: number) => (
+                { //@ts-ignore
+                    myPrompts && myPrompts.map(({ name, price, type, images }: any, idx: number) => (
                     <PromptCard key={idx} name={name} price={price} tag={type} image={images[0]} />
                 ))}
             </div>

@@ -3,9 +3,11 @@ import { useForm } from 'react-hook-form';
 import clsx from 'classnames';
 import { useState, useEffect, useContext } from 'react';
 import Icon from '@/components/Icon';
-import UserService from '../supabase/User';
 import { useRouter } from 'next/router';
 import { UserContext } from '@/contexts/UserContext';
+import axios from 'axios';
+import { loginRoute, registerRoute } from '../utils/apis'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export type FormData = {
   username: string;
@@ -18,8 +20,9 @@ export interface LoginFormProps {
 }
 
 const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
-  console.log(currentUser, 'lolsignin');
+  const { setCurrentUser } = useContext(UserContext);
+  const { data: session } = useSession();
+  console.log(session);
 
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
@@ -29,56 +32,52 @@ const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>();
-  console.log(isLogin, "islogin");
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (userInfo) => {
     try {
       if (isLogin) {
-        UserService.sign_in(data).then((response) => {
-          const { data, error } = response;
-          if (error) throw new Error(error)
-          if (onSuccess) {
-            console.log(onSuccess);
-
-            let { user: { email, id } } = data;
-            const user = {
-              email,
-              id,
-            }
-            setCurrentUser(user);
-            onSuccess();
-            return;
-          }
-          if (error) throw 'Error in Login';
-          if (router.query.redirectUrl) {
-            let { data: { user: { email, id } } } = response;
-            const user = {
-              email,
-              id,
-            }
-            setCurrentUser(user);
-            router.push(router.query.redirectUrl as string);
-          } else {
-            let { data: { user: { email, id } } } = response;
-            const user = {
-              email,
-              id,
-            }
-            setCurrentUser(user);
-            router.push('/marketplace');
-          }
+        const { email, password } = userInfo;
+        const { data } = await axios.post(loginRoute, {
+          email,
+          password,
         });
-      } else {
-        const { data, error } = await UserService.sign_up(data)
-          if (error) throw 'Error in Register';
-          setIsLogin(true);
 
-          const user = {
-            email: data.user.email,
-            username: data.user.user_metadata.username,
-            id: data.user.id
-          }
-        setCurrentUser(user);
+        if (!data.status) throw new Error(data.msg);
+        setCurrentUser(data.user);
+        if (process.env.NEXT_PUBLIC_LOCALHOST_KEY)
+          localStorage.setItem(
+            process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+            JSON.stringify(data.user)
+          );
+
+        if (onSuccess) {
+          setCurrentUser(data.user);
+          onSuccess();
+          return;
+        }
+        if (router.query.redirectUrl) {
+          setCurrentUser(data.user);
+          router.push(router.query.redirectUrl as string);
+        } else {
+          setCurrentUser(data.user);
+          router.push('/marketplace');
+        }
+      } else {
+        const { username, email, password } = userInfo;
+        const { data } = await axios.post(registerRoute, {
+          username,
+          email,
+          password,
+        });
+        if (!data.status) throw data.msg;
+
+        setIsLogin(true);
+        if (process.env.NEXT_PUBLIC_LOCALHOST_KEY)
+          localStorage.setItem(
+            process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+            JSON.stringify(data.user)
+          );
+        setCurrentUser(data.user);
       }
     } catch (e) {
       console.log('SOME ERROR HAPPENED', e);
@@ -87,25 +86,18 @@ const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
 
   const signWithGoogle = (e: any) => {
     e.preventDefault();
-    UserService.sign_in_google().then((response) => {
-      const { data, error } = response;
-      if (error) throw 'Error in Login';
-      if (onSuccess) {
-        onSuccess();
-        return;
-      }
-      if (router.query.redirectUrl) {
-        router.push(router.query.redirectUrl as string);
-      } else {
-        router.push('/marketplace');
-      }
-    });
+    localStorage.setItem(
+      //@ts-ignore
+      process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+      null
+    );
+
+    signIn()
   };
 
   useEffect(() => {
     onChildData(isLogin);
   }, [isLogin, onChildData]);
-  // console.log(UserService.get_session().then((data)=> console.log(data.data.session.user)),'seson ibncd');
 
   return (
     <form

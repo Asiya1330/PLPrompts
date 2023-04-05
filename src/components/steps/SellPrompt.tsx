@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useContext } from "react";
 import { StepperContext } from "@/contexts/StepperContext";
 import { UserContext } from "@/contexts/UserContext";

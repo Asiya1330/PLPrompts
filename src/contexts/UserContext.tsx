@@ -1,52 +1,62 @@
-import User from '@/supabase/User'
-import supabase from '@/utils/supabase'
-import { log } from 'console'
+//@ts-nocheck
 import React, { createContext, useEffect, useState } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
+
 
 export type IUser = {
     email: string,
     username: string | undefined,
     avatar_url: string | undefined,
     password: string | undefined,
-    id: string
+    _id: string,
+    isAvatarImageSet: string,
+    avatarImage: string
 }
-export const UserContext = createContext({
+type UserContextType = {
+    currentUser: UserContextType | null | undefined;
+    setCurrentUser: React.Dispatch<React.SetStateAction<UserContextType | null | undefined>>;
+}
+
+export const UserContext = createContext<UserContextType>({
     currentUser: null,
     setCurrentUser: () => null
 })
 
-export default function UserProvider({ children }) {
+export default function UserProvider({ children }: any) {
 
-    const [currentUser, setCurrentUser] = useState(UserContext);
+    // const [currentUser, setCurrentUser] = useState(UserContext);
+    const [currentUser, setCurrentUser] = useState<UserContextType | null>();
+    const { data: session } = useSession();
+    console.log(session);
+
     useEffect(() => {
         const getUserFromSession = async () => {
-            const { error, data } = await User.get_session();
-
-            if (data.session?.user) {
-                const { user_metadata: { avatar_url }, id, email } = data.session?.user;
-                console.log(data.session?.user, email, avatar_url, id, 'mounting');
-                const useExist = await User.find({ email })
-                if (!useExist.data.email) {                    
-                    await User.addUser({ email, avatar_url, id })
+            if (process.env.NEXT_PUBLIC_LOCALHOST_KEY) {
+                const storedData = localStorage.getItem(process.env.NEXT_PUBLIC_LOCALHOST_KEY);
+                if (storedData) {
+                    const data = await JSON.parse(
+                        storedData
+                    );
+                    if (!data) {
+                        if (session && session.user) {
+                            const { user } = session;
+                            const userObj: IUser = {
+                                email: user.email,
+                                _id: `${user.id}000`,
+                                avatarImage: user.image,
+                                username: user.name
+                            }
+                            setCurrentUser(userObj)
+                        }
+                    }
+                    else if (data) setCurrentUser(data)
+                    else setCurrentUser(null)
                 }
-                return setCurrentUser({ email, avatar_url, id })
 
-                // let currentUserObj = {
-                //     email: userExist.data[0].email,
-                //     id: userExist.data[0].id,
-                //     avatar_url: userExist.data[0].avatar_url,
-                //     username: userExist.data[0].username
-                // };
-                // return setCurrentUser(currentUserObj)
             }
-            // if (data?.user) {
-            //     console.log(data.user, 'not google ign in ');
-            // }
-            setCurrentUser(null)
         }
-
         getUserFromSession();
-    }, []);
+    }, [session]);
 
     const value = { currentUser, setCurrentUser }
 

@@ -6,7 +6,6 @@ export default function Sales() {
             <h1 className='' style={{
                 fontSize:"30px",
                 fontWeight: "bold",
-                // margin:"20px"
             }}>
                 Sales
             </h1>

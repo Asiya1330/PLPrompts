@@ -1,13 +1,9 @@
+//@ts-nocheck
 import PromptCard from '@/components/PromptCard';
 import Image from 'next/image';
 import { heroPrompts } from '@/helpers/mock';
-import { useContext } from 'react';
-import { UserContext } from '@/contexts/UserContext';
 
-export default function Hero() {
-
-  const { currentUser } = useContext(UserContext);
-  
+export default function Hero() {  
   return (
     <div className="w-full flex flex-row justify-center items-center">
       <div className="flex flex-col gap-y-32">

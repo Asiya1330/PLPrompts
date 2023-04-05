@@ -117,7 +117,6 @@ const Chat: NextPageWithAuth = () => {
               <Icon>search</Icon>
               <input
                 className="grow bg-[#515151] outline-none placeholder:text-white placeholder:text-sm placeholder:leading-4 w-full"
-                // style={{ width: "-webkit-fill-available" }}
                 type="text"
                 placeholder="Search Users..."
                 onChange={(e: any) => {
@@ -175,8 +174,7 @@ const Chat: NextPageWithAuth = () => {
               )}
           </div>
           <div
-            className="absolute bottom-[20px] w-full grow flex flex-row bg-[#515151] items-center px-4 py-1 items-center border-[0.5px] border-[#FFFFFF99] rounded-full w-[calc(100%-16px)] left-1/2 -translate-x-1/2"
-            // style={{ width: "-webkit-fill-available" }}
+            className="absolute bottom-[20px] grow flex flex-row bg-[#515151] px-4 py-1 items-center border-[0.5px] border-[#FFFFFF99] rounded-full w-[calc(100%-16px)] left-1/2 -translate-x-1/2"
           >
             <input
               onKeyUp={onKeyUp}

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { IUser } from "@/contexts/UserContext";
 import supabase from "../utils/supabase";
 import { UserIdentity } from "@supabase/supabase-js";

@@ -34,14 +34,27 @@ export default function Header() {
                   {icon && <Icon className="ml-1">{icon}</Icon>}
                 </Link>
               ))}
+              <Link key='Chat' className="flex items-center mr-6 last:mr-0" href='/chat'>
+                Chat
+              </Link>
               {
+                //@ts-ignore
                 !(currentUser && currentUser.email) ?
                   <Link key='Login' className="flex items-center mr-6 last:mr-0" href='/login'>
                     Login
-                  </Link> :
-                  <Link key='Account' className="flex items-center mr-6 last:mr-0" href='/profile'>
-                    Account
                   </Link>
+                  :
+                  <>
+                    <Link key='Account' className="flex items-center mr-6 last:mr-0" href='/profile'>
+                      Account
+                    </Link>
+                    {
+                      (currentUser?.role === 'admin') &&
+                      <Link key='Approval' className="flex items-center mr-6 last:mr-0" href='/approval'>
+                        Approval
+                      </Link>
+                    }
+                  </>
               }
             </nav>
           </div>

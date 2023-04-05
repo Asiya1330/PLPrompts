@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 //@ts-nocheck
 export default function GetPaid() {
+  const [country, setCountry] = useState('Austria');
   return (
     <div className="grow flex flex-col items-center pt-32">
       <div className="flex flex-col items-center justify-center">
@@ -13,8 +16,11 @@ export default function GetPaid() {
           We need to know this for sending payouts. Please read our FAQ if your
           country does not appear here.
         </p>
-        <select className="w-[550px] px-6 py-4 bg-[#FFFFFF4D] rounded-md outline-none focus-within:text-zinc-500">
-          <option selected>Australia</option>
+        <select
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="w-[550px] px-6 py-4 bg-[#FFFFFF4D] rounded-md outline-none focus-within:text-zinc-500">
+          <option>Australia</option>
           <option>Austria</option>
           <option>Belgium</option>
           <option>Brazil</option>

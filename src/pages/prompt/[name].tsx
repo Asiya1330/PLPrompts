@@ -1,21 +1,41 @@
+//@ts-nocheck
 import { useRouter } from 'next/router'
-import React, { useContext, useEffect, useState } from 'react';
-import moduleName from '../'
-import { TAG_IMAGE_MAP } from '@/helpers/constants';
-import { Tag } from '@/helpers/interface';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
-import User from '@/supabase/User';
 import { UserContext } from '@/contexts/UserContext';
+import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, getUserById } from '@/utils/apis';
+import axios from 'axios';
+import Link from 'next/link';
 
 export default function SinglePrompt() {
+
     const [prompt, setPrompt] = useState();
     const { currentUser } = useContext(UserContext);
     const [promptUser, setPromptUser] = useState();
     const router = useRouter();
     const { prompts } = useContext(PromptsContext);
-    console.log(prompts);
+    const [isClicked, setIsClicked] = useState(false);
+    const heartImageRef = useRef()
 
     const { name } = router.query;
+
+
+    useEffect
+
+    useEffect(() => {
+        const addPromptViews = async () => {
+            if (currentUser._id && prompt && prompt._id) {
+                const { data } = await axios.get(`${GetPromptViewsByUserId}/${currentUser._id}/${prompt._id}`)
+                if (!data.length) {
+                    await axios.post(InsertViewPromptUrl, {
+                        viewerId: currentUser._id,
+                        promptId: prompt._id
+                    })
+                }
+            }
+        }
+        addPromptViews()
+    }, [currentUser, prompt])
 
     useEffect(() => {
         if (prompts) {
@@ -25,25 +45,36 @@ export default function SinglePrompt() {
     }, [name, prompts])
 
     useEffect(() => {
-
         const getUser = async () => {
             if (prompt) {
-                const [user] = await User.findUserById(prompt.userId);
-                setPromptUser(user)
+                const { data } = await axios.get(`${getUserById}/${prompt.userId}`);
+                if (data) {
+                    setPromptUser(data)
+                }
             }
         }
-
         getUser();
     }, [name, prompt])
 
-    const typeDesc = {
-        [Tag.midjourney]: 'After purchasing, you will gain access to the prompt file, which you can use with Midjourney. You must already have access to Midjourney to use this prompt.',
-        [Tag.gpt3]: 'After purchasing, you will gain access to the prompt file, which you can use with ChatGPT. You must already have access to ChatGPT to use this prompt.',
-        [Tag.promptbase]: `After purchasing, you will gain access to the prompt file, which you can use in <Link href='/generate'>PromptBase Generate</Link>`,
-        [Tag.dalle]: 'After purchasing, you will gain access to the prompt file, which you can use within DALL·E with your own credits. You must already have access to DALL·E to use this prompt.',
-        [Tag.diffusion]: 'After purchasing, you will gain access to the prompt file, which you can use with DreamStudio.        '
+    const handleMarkFav = async () => {
+        if (!isClicked) {
+            setIsClicked(true);
+            if (currentUser._id && prompt && prompt._id) {
+                heartImageRef.current.style.borderRadius = '50%';
+                heartImageRef.current.style.background = 'red';
+
+                const { data } = await axios.get(`${GetPromptFavByUserId}/${currentUser._id}/${prompt._id}`);
+                console.log(data, ';like daa');
+
+                if (!data.length) {
+                    await axios.post(InsertLikePromptUrl, {
+                        likerId: currentUser._id,
+                        promptId: prompt._id
+                    })
+                }
+            }
+        }
     }
-    console.log(prompt);
 
     return (
         <div className='m-10 gap-1 flex flex-row'>
@@ -60,7 +91,7 @@ export default function SinglePrompt() {
                                 {prompt.name} <span className='text-xl text-gray-500 cursor-pointer' title='edit title'></span>
                             </p>
                             {
-                                (currentUser.id === prompt.userId) &&
+                                (currentUser._id === prompt.userId) &&
                                 <button>Edit prompt &#x270E;</button>
                             }
                         </div>
@@ -68,24 +99,24 @@ export default function SinglePrompt() {
                             <div className="owner-seller flex align-middle flex-row gap-5">
 
                                 <div className="sellerStats flex align-middle flex-row" title='seller stats'>
-                                    <img src="/icons/tag.svg" alt="" className=' w-[17px] mr-[5px]' /> <span>0</span>
+                                    <img src="/icons/tag.svg" alt="" className=' w-[17px] mr-[5px]' /> <span>{prompt.purchaseCount ? prompt.purchaseCount : 0}</span>
                                 </div>
                                 <div className="promptOwner">
                                     {promptUser?.username || 'user'}
                                 </div>
 
                             </div>
-                            <div className="rate-view-favs flex align-middle align-middle flex-row gap-5">
+                            <div className="rate-view-favs flex align-middle flex-row gap-5">
                                 <div className="rating">
                                     {prompt.rating ? prompt.rating : 'no ratings'}
                                 </div>
                                 <div className="views flex align-middle flex-row" title='views'>
-                                    <img src="/icons/eye.svg" alt="" className=' w-[17px] mr-2' /><span>{prompt.views}0</span>
+                                    <img src="/icons/eye.svg" alt="" className=' w-[17px] mr-2' /><span>{prompt.views}</span>
                                 </div>
-                                <div className="favs" title='mark as favourites'>
-                                    <img src="/icons/heart.svg" alt="" style={{ color: "white" }} />
-                                    {/* {prompt.fav} */}
-                                </div>
+                                <button className="favs p-0 border-none flex flex-row align-middle justify-center" title='mark as favourites' onClick={handleMarkFav} disabled={isClicked} >
+                                    <img ref={heartImageRef} src="/icons/heart.svg" alt="" style={{ color: "white" }} className=' mr-2' />
+                                    <span>{prompt.likes}</span>
+                                </button>
                             </div>
                         </div>
                         <hr className='mb-5 mt-5' />
@@ -96,9 +127,13 @@ export default function SinglePrompt() {
                         <div className="price mb-5">
                             <span className='text-3xl'>{prompt.price}</span>
                         </div>
-                        <button className='getPrompt'>
-                            Get Prompt
-                        </button>
+                        <Link href={{ pathname: '/payment', query: { amount: prompt.price, promptId: prompt._id } }}>
+                            <button className='getPrompt'>
+                                Get Prompt
+                            </button>
+                        </Link>
+                        <p className='flex justify-start mt-3'>{prompt.createdAt}</p>
+
                     </div>
                     <div className="rightSide mt-5 w-[42%]">
                         <div className="imagesCont h-[100vh] flex flex-col overflow-auto">

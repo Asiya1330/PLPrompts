@@ -38,6 +38,8 @@ const find_room = async ({ room_id }: any) => {
     .from("room")
     .select("id, user1, user2")
     .eq("id", room_id);
+  if (error) console.log(error);
+
   return { data, error };
 };
 

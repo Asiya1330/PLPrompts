@@ -1,4 +1,3 @@
-import Stepper from '@/components/Stepper';
 import StepperControl from '@/components/StepperControl';
 import { useContext, useEffect, useState } from 'react';
 import SellPrompt from '@/components/steps/SellPrompt';
@@ -10,15 +9,15 @@ import PromptDetail from '@/components/steps/PromptDetail';
 import { StepperContext } from '@/contexts/StepperContext';
 import StepAction from '@/components/StepAction';
 import { NextPageWithAuth } from '@/helpers/interface';
-import UserService from '@/supabase/User';
-import PromptService from '@/supabase/Prompt'
 import { UserContext } from '@/contexts/UserContext';
 import { PromptsContext } from '@/contexts/PromptsContext';
+import axios from 'axios';
+import { insertPrompt, uploadImageByUserIdAndFile } from '@/utils/apis';
 
 const Sell: NextPageWithAuth = () => {
   const { currentUser } = useContext(UserContext)
   const { prompts, setPrompts } = useContext(PromptsContext)
-
+  const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext)
   const [currentStep, setCurrentStep] = useState(1);
   const [userData, setUserData] = useState('');
   const [finalData, setFinalData] = useState([]);
@@ -36,7 +35,9 @@ const Sell: NextPageWithAuth = () => {
   const [prompt, setPrompt] = useState();
   const [promptIns, setPromptIns] = useState();
   const [fileUrls, setFileUrls] = useState();
+  const [allFiles, setAllFiles] = useState([])
   const [profileLink, setProfileLink] = useState();
+  const [allFilesUrl, setAllFilesUrls] = useState([])
   //
 
   const displayStep = (step: number) => {
@@ -62,6 +63,8 @@ const Sell: NextPageWithAuth = () => {
           promptIns={promptIns}
           setPromptIns={setPromptIns}
           fileUrls={fileUrls}
+          setAllFiles={setAllFiles}
+          allFiles={allFiles}
           setFileUrls={setFileUrls}
           profileLink={profileLink}
           setProfileLink={setProfileLink}
@@ -74,11 +77,9 @@ const Sell: NextPageWithAuth = () => {
   };
 
   useEffect(() => {
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await UserService.get_session();
-      if (session !== null && currentStep === 2) {
+    const getSession = () => {
+
+      if (currentUser && currentStep === 2) {
         setCurrentStep(direction === 'next' ? 3 : 1);
       }
     };
@@ -88,6 +89,27 @@ const Sell: NextPageWithAuth = () => {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    console.log(allFilesUrl, 'updatd');
+
+  }, [allFilesUrl])
+
+  const addAllFilesToS3 = async (allFiles: any) => {
+    const urls = await Promise.all(allFiles.map(async (file: any) => {
+      let formData = new FormData();
+      formData.append('file', file);
+      //@ts-ignore
+      formData.append('userId', currentUser._id);
+
+      const { data } = await axios.post(uploadImageByUserIdAndFile,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      return data.Location
+    }))
+    return urls;
+  }
 
   const handleClick = async (direction: string) => {
     if (currentStep == 3 && (!type || !price || !description || !name)) {
@@ -96,12 +118,23 @@ const Sell: NextPageWithAuth = () => {
     if (currentStep == 4 && (!prompt || !profileLink || !promptIns)) {
       return alert('Please fill all fields before moving to next step')
     }
+    if (currentStep == 4 && allFiles.length < 5) {
+      return alert('Please upload minimum 5 images')
+    }
+    if (currentStep == 4 && allFiles.length > 9) {
+      return alert('You cannot upload more than 9 images')
+    }
 
     if (currentStep === steps.length - 1 && direction === 'next') {
-      const userId = currentUser.id;
+      //@ts-ignore
+      const userId = currentUser._id;
       if (!userId) alert('user is not logged in');
 
-      const newPrompt = await PromptService.create({
+      console.log(allFiles, 'allfiles');
+      const urls = await addAllFilesToS3(allFiles);
+      console.log(urls, 'ye urls');
+
+      const newPrompt = await axios.post(insertPrompt, {
         type,
         description,
         price,
@@ -110,10 +143,13 @@ const Sell: NextPageWithAuth = () => {
         profileLink,
         promptIns,
         userId,
-        images: fileUrls
+        images: urls
       });
-      const updatedPrompts = [...prompts, newPrompt]
-      setPrompts(updatedPrompts)
+      console.log(newPrompt);
+      //@ts-ignore
+      const updatedPrompts = [...unapprovedPrompts, newPrompt.data]
+      //@ts-ignore
+      setUnapprovedPrompts(updatedPrompts)
     }
 
     let newStep = currentStep;
@@ -125,7 +161,6 @@ const Sell: NextPageWithAuth = () => {
 
   return (
     <div className="grow flex flex-col justify-center items-center py-14 px-20">
-      {/* <Stepper steps={steps} currentStep={currentStep} /> */}
       <StepAction className="w-2/3" current={currentStep} total={steps.length} />
       <div className="my-10 p-10">
         <StepperContext.Provider

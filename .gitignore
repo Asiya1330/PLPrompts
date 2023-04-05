@@ -17,7 +17,10 @@
 
 .env
 client_secret_202843990980-kdnq1rav2kg95souisiiu5svbtv1j4cu.apps.googleusercontent.com.json
+client_secret_626307033310-srrg490kjirdto9sagkef0phsorpffm7.apps.googleusercontent.com.json
+Petio_accessKeys.csv
 PromptclientsPoint.txt
+PLPromtBase.zip
 # misc
 .DS_Store
 *.pem

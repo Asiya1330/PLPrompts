@@ -26,7 +26,8 @@ const create = async ({
   };
   
   const { data, error } = await supabase.from("prompt").insert(promptMetaData).select('*');
-  if (error) throw new Error('Error while generating prompts')
+  //@ts-ignore
+  if (error) throw new Error('Error while generating prompts:', error)
   return data[0];
 };
 
@@ -34,7 +35,6 @@ const find_all = async () => {
   const { data, error } = await supabase
     .from("prompt")
     .select("*")
-    // .like("type", `%${type}%`);
 
   return {
     data,

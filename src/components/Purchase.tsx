@@ -6,7 +6,6 @@ export default function Purchase() {
             <h1 className='' style={{
                 fontSize:"30px",
                 fontWeight: "bold",
-                // margin:"20px"
             }}>
                 Purchase
             </h1>

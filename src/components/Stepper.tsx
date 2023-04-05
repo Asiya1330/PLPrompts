@@ -12,7 +12,6 @@ const Stepper = ({ steps, currentStep }: StepperProps) => {
     const newSteps = [...steps];
     let count = 0;
     while (count < newSteps?.length) {
-      //current step
       if (count === stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
@@ -22,7 +21,6 @@ const Stepper = ({ steps, currentStep }: StepperProps) => {
         };
         count++;
       }
-      //setp completed
       else if (count < stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
@@ -32,8 +30,6 @@ const Stepper = ({ steps, currentStep }: StepperProps) => {
         };
         count++;
       }
-
-      //step pending
       else {
         newSteps[count] = {
           ...newSteps[count],
@@ -89,13 +85,6 @@ const Stepper = ({ steps, currentStep }: StepperProps) => {
               index + 1
             )}
           </div>
-          {/* <div
-            className={`absolute top-0 text-center mt-16 w-32 text-xs font-medium uppercase ${
-              step.highlighted ? 'text-gray-900' : 'text-gray-400'
-            }`}
-          >
-            {step.description}
-          </div> */}
         </div>
         <div
           className={`flex-auto border-t-2 transition bg-yellow duration-500 ease-in-out${

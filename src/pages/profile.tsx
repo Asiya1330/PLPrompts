@@ -10,7 +10,7 @@ import React, { useContext, useState } from 'react'
 export default function Profile() {
     const [render, setRender] = useState('prompts');
 
-    const renderProfileSection = {
+    const renderProfileSection: any = {
         purchase: <Purchase />,
         favs: <Favourites />,
         settings: <Settings />,
@@ -37,13 +37,9 @@ export default function Profile() {
                 <button className='active:bg-gray-200 active:text-black' onClick={renderPurchases}>Purchases</button>
                 <button className='active:bg-gray-200 active:text-black' onClick={renderFavs}>Favorites</button>
                 <button className='active:bg-gray-200 active:text-black' onClick={renderSettings}>Settings</button>
-
             </div>
-
             <div>
-                {
-                    renderProfileSection[render]
-                }
+                {renderProfileSection[render]}
             </div>
         </div>
     )

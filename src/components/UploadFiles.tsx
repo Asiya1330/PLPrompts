@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import uploadHelperFunctions from '../supabase/Images'
 import UploadImageContainer from './UploadImageContainer';
-const env = process.env.NEXT_PUBLIC_ENV
-const org = process.env.NEXT_PUBLIC_ORG
-const bucketUrl = process.env.NEXT_PUBLIC_BASE_BUCKET_URL
 
-export default function UploadFiles({ userId, setFileUrls }: any) {
+export default function UploadFiles({ userId, setFileUrls, setAllFiles, allFiles }: any) {
     const [files, setFiles] = useState<{
         url: string,
         prefix: string,
@@ -18,31 +14,19 @@ export default function UploadFiles({ userId, setFileUrls }: any) {
         setFileUrls(urls);
     }, [files])
 
-    const updateFiles = (path) => {
-        // promptbase-dev-43637766-77a9-4cc3-8f4e-f8d1970e6601/1680293661240-avatar-gpt1.png
-        const fileUrl = `${bucketUrl}/${path}`;
-        const prefix = path.split('/')[1].split('-')[0];
-        console.log(prefix);
-        const name = path.split('/')[1];
-        const file = {
-            prefix: prefix,
-            name: name,
-            url: fileUrl,
-            path
-        }
-        const updatedFiles = [...files, file];
-        setFiles(updatedFiles);
+
+    const updateFilesAfterDeletion = (name: any) => {
+        const updatedAllFiles = allFiles.filter((file: any) => file.name !== name)
+        setAllFiles(updatedAllFiles)
     }
 
-    const updateFilesAfterDeletion = (path) => {
-        const updatedFiles = files.filter((item) => item.path != path);
-        setFiles(updatedFiles)
-    }
-
-    const addFiles = async (e) => {
+    const addFiles = async (e: any) => {
         const file = e.target.files[0];
-        const { path } = await uploadHelperFunctions.uploadImageToFolder(file, userId);
-        updateFiles(path);
+        setFiles([...files, file]);
+        setAllFiles([...allFiles, file])
+        let formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', userId);
     }
     return (
         <div className="upload-section w-full flex flex-col gap-y-2">
@@ -58,10 +42,10 @@ export default function UploadFiles({ userId, setFileUrls }: any) {
                 "alignItems": "center",
                 "flexWrap": "wrap"
             }}>
-                {files && files.map((file) => {
+                {allFiles && allFiles.map((file: any, idx: any) => {
                     console.log(file, ';ncdj');
 
-                    return <UploadImageContainer file={file} handleDelete={updateFilesAfterDeletion} />
+                    return <UploadImageContainer key={idx} file={file} handleDelete={updateFilesAfterDeletion} />
                 })
 
                 }

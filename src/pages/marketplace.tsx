@@ -1,11 +1,8 @@
 import FilterSection from '@/components/FilterSection';
 import { FilterSections } from '@/helpers/mock';
 import Icon from '@/components/Icon';
-import { Tag } from '@/helpers/interface';
 import { useState, useEffect, useContext } from 'react';
 import PromptCard from '@/components/PromptCard';
-import { trendingPrompts } from '@/helpers/mock';
-import PromptService from '../supabase/Prompt';
 import clsx from 'classnames';
 import { PromptsContext } from '@/contexts/PromptsContext';
 
@@ -25,44 +22,9 @@ export default function Marketplace() {
       threeD: true,
     },
   });
-  // const [prompts, setPrompts] = useState<any>([]);
 
   const { prompts } = useContext(PromptsContext);
   console.log(prompts, 'promscd ');
-
-
-  useEffect(() => {
-    // const getAllPromps = async (newObj: any) => {
-    //   await PromptService.find(newObj).then((result: any) => {
-    //       const newPrompts = result.data.map((p: any) => ({
-    //       ...p,
-    //       type: Tag[p.type as string],
-    //     }));
-    //     setPrompts(newPrompts);
-    //   });
-    // };
-
-    // const findKeys = [];
-    // for (let key in filterList) {
-    //   for (let nestedKey in filterList[key]) {
-    //     if (filterList[key][nestedKey] === true) {
-    //       findKeys.push(nestedKey);
-    //     }
-    //   }
-    // }
-    // const [sortby, type, category] = findKeys;
-    // console.log(findKeys);
-    // const newObj = {
-    //   sortby,
-    //   type,
-    //   category,
-    //   page: currentPage,
-    // };
-
-    // setSortByCaption(newObj.sortby);
-
-    // getAllPromps(newObj);
-  }, [filterList, currentPage]);
 
   const handleUpdateFilter = (section: string, key: string, value: boolean) => {
     setFilterList((preFilter) => ({
@@ -99,15 +61,19 @@ export default function Marketplace() {
         <div id="trendingPrompts" className="flex flex-col pt-8 px-8 w-full mx-auto">
           <h3 className="pb-8">{sortByCaption === 'trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
           <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
-            {prompts && prompts?.map(({ name, price, type, images }: any, idx: number) => (
-              <PromptCard key={idx} name={name} price={price} tag={type} image={images[0]} />
-            ))}
+
+            { //@ts-ignore
+              prompts && prompts?.map(({ name, price, type, images }: any, idx: number) => (
+                <PromptCard key={idx} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
+              ))}
           </div>
-          {prompts && prompts.length === 0 && (
-            <div className="w-full">
-              <h3 className="text-center mx-auto">No Prompts</h3>
-            </div>
-          )}
+          {//@ts-ignore
+            prompts && prompts.length === 0 && (
+              <div className="w-full">
+                <h3 className="text-center mx-auto">No Prompts</h3>
+              </div>
+            )}
+            
           <div className=" flex gap-x-2 pb-14 ml-auto">
             <button className="slider-button" onClick={() => handleClick('back')}>
               <Icon>left</Icon>
@@ -164,4 +130,4 @@ export default function Marketplace() {
   );
 }
 
-Marketplace.auth = true;
+// Marketplace.auth = true;

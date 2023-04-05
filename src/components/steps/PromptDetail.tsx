@@ -1,7 +1,3 @@
-import { useEffect, useState } from "react";
-import AutoComplete from "react-autocomplete";
-
-
 const PromptDetail = ({
   price,
   setPrice,
@@ -11,10 +7,6 @@ const PromptDetail = ({
   setDesc,
   name,
   setName }: any) => {
-  // const [price, setPrice] = useState();
-  // const [description, setDesc] = useState();
-  // const [type, setType] = useState();
-  // const [name, setName] = useState();
 
   return (
     <div className="flex flex-col w-full rounded-lg w-[550px] mx-auto min-w-[470px] items-center gap-y-2">
@@ -36,7 +28,7 @@ const PromptDetail = ({
           onChange={(e) => setType(e.target.value)}
           value={type}
         >
-          <option selected>Select Prompts Type</option>
+          <option>Select Prompts Type</option>
           <option>DALL-E</option>
           <option>Midjourney</option>
           <option>GPT</option>
@@ -92,7 +84,7 @@ const PromptDetail = ({
         >
           <option>0.99$</option>
           <option>1.99$</option>
-          <option selected>2.99$</option>
+          <option>2.99$</option>
           <option>3.99$</option>
           <option>4.99$</option>
           <option>5.99$</option>

@@ -46,10 +46,6 @@ export const ROUTE_MAP = [
     title: 'Hire',
     href: '/hire',
   },
-  // {
-  //   title: 'Login',
-  //   href: '/login',
-  // },
   {
     title: 'Sell',
     href: '/sell',

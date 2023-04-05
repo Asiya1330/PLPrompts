@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useContext, useState } from "react";
 import UploadFiles from '../UploadFiles'
 import { UserContext } from "@/contexts/UserContext";
@@ -8,6 +9,8 @@ const PromptFile = ({
   setPromptIns,
   fileUrls,
   setFileUrls,
+  setAllFiles,
+  allFiles,
   profileLink,
   setProfileLink,
 }: any) => {
@@ -120,7 +123,7 @@ const PromptFile = ({
         </div>
         {
           currentUser &&
-          <UploadFiles userId={currentUser.id} setFileUrls={setFileUrls} />
+          <UploadFiles userId={currentUser._id} setFileUrls={setFileUrls} setAllFiles={setAllFiles} allFiles={allFiles} />
         }
 
         <div className="midjourney-profile w-full flex flex-col gap-y-2">
@@ -141,9 +144,7 @@ const PromptFile = ({
         <iframe
           className="mx-auto lg:float-right w-full lg:w-[590px] h-[380px] lg:h-[420px] z-0"
           src="https://player.vimeo.com/video/803439591?h=b962ddd0b6"
-          //   alt="sellPromptVideo"
           title="payer.vimeo.player"
-          //   frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
           allowFullScreen
         ></iframe>

@@ -27,7 +27,6 @@ const FilterSection = ({ tagImg, tag, filterLists, filter, onChange }: FilterSec
             ) : (
               <div className="border-gray-400 border-2 w-[17px] h-[18px]" onClick={() => onChange(key, true)}></div>
             )}
-            {/* <input type="checkbox" className="text-gray-400" key={index} name={key} checked={filter[key]} onChange={(e) => onChange(key, e.target.checked)} /> */}
             <span>{value}</span>
           </div>
         ))}

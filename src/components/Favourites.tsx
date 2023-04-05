@@ -6,7 +6,6 @@ export default function Favourites() {
             <h1 className='' style={{
                 fontSize:"30px",
                 fontWeight: "bold",
-                // margin:"20px"
             }}>
                 Favourites
             </h1>

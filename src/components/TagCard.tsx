@@ -5,7 +5,6 @@ import { TAG_IMAGE_MAP } from '@/helpers/constants';
 export default function TagCard({ type, value }: { type: string; value?: string }) {
 
   const obj = TAG_IMAGE_MAP[type];
-  console.log(obj, TAG_IMAGE_MAP[type]);
 
   const getDirection = (position: TagPosition) => (position === TagPosition.left ? 'row' : 'row-reverse');
 

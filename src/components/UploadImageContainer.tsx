@@ -1,12 +1,9 @@
 import React from 'react'
-import uploadHelperFunctions from '../supabase/Images'
 
-
-export default function UploadImageContainer({ file: { url, prefix, path }, handleDelete }: any) {
+export default function UploadImageContainer({ file, handleDelete }: any) {
 
     const removeFile = async () => {
-        await uploadHelperFunctions.deleteObjectsWithPath(path);
-        handleDelete(path)
+        handleDelete(file.name)
     }
 
     return (
@@ -30,21 +27,13 @@ export default function UploadImageContainer({ file: { url, prefix, path }, hand
                         alignItems: 'center',
                         justifyContent: 'center',
                         font: "-webkit-mini-control"
-                    }}>
-                x
-                {/* <img src='../../public/icons/cross.svg' alt=""
-            style={{
-                width: "100%",
-                height: "100%"
-            }} /> */}
-            </div>
+                    }}>x</div>
             <img className='writeImg'
                 style={{
                     "maxWidth": "100px",
                     "minHeight": "100px",
-                    // position: "relative"
                 }}
-                src={url} alt="" />
+                src={URL.createObjectURL(file)} alt="" />
         </div>
     )
 }
