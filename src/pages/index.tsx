@@ -1,24 +1,54 @@
 //@ts-nocheck
+import { useContext, useEffect } from 'react'
 import Head from 'next/head';
 import Image from 'next/image';
 import PromptCard from '@/components/PromptCard';
 import { FEATURED_MAP } from '@/helpers/constants';
 import {
-  featuredPrompts,
+  // featuredPrompts,
   weekPrompts,
   monthPrompts,
-  midjourneyPrompts,
-  gpt3Prompts,
-  dallePrompts,
-  diffusionPrompts,
+  // midjourneyPrompts,
+  // gpt3Prompts,
+  // dallePrompts,
+  // diffusionPrompts,
 } from '@/helpers/mock';
 import { useRouter } from 'next/router';
 
 import CustomSwiper from '@/components/CustomSwiper';
 import Hero from '@/components/Hero';
+import { useState } from 'react';
+import { PromptsContext } from '@/contexts/PromptsContext';
+import Link from 'next/link';
 
 export default function Home() {
   const router = useRouter();
+  const [currentTab, setCurrentTab] = useState('feature');
+  const [midjourneyPrompts, setMidhourneyPrompts] = useState([]);
+  const [gpt3Prompts, setGPT3Prompts] = useState([]);
+  const [dallePrompts, setDallEPrompts] = useState([]);
+  const [diffusionPrompts, setDiffusion] = useState([]);
+
+  const { featuredPrompts, newestPrompts, prompts } = useContext(PromptsContext)
+
+  useEffect(() => {
+    const midhur = newestPrompts.filter((prompt) => prompt.type === 'Midjourney')
+    setMidhourneyPrompts(midhur);
+    const gpt = newestPrompts.filter((prompt) => prompt.type === 'GPT')
+    setGPT3Prompts(gpt);
+
+    const diffusion = newestPrompts.filter((prompt) => prompt.type === 'Stable Diffusion')
+    setDiffusion(diffusion);
+
+    const dalle = newestPrompts.filter((prompt) => prompt.type === 'DALL-E')
+    setDallEPrompts(dalle);
+    console.log(midhur, gpt, diffusion, dalle);
+
+
+  }, [newestPrompts])
+
+  const handleCurentTab = (val) => setCurrentTab(val)
+
   return (
     <>
       <Head>
@@ -29,7 +59,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <div className="container h-[calc(100vh-80px)] mx-auto mb-36 mt-32">
+        <div className="container mx-auto mb-36 mt-32">
           <Hero />
         </div>
 
@@ -45,21 +75,34 @@ export default function Home() {
 
         <div className="container flex flex-col items-center mx-auto mb-36">
           <div className="grid grid-cols-3 gap-x-5 px-28 pb-7 mb-16 border-b-[0.5px] border-b-white">
-            <button className="prompts-button active">Featured Prompts</button>
-            <button className="prompts-button">Trending Prompts</button>
-            <button className="prompts-button">Newest Prompts</button>
+            <button className={`prompts-button ${currentTab === 'feature' ? 'active' : ''}`} onClick={() => handleCurentTab('feature')}>Featured Prompts</button>
+            <button className={`prompts-button ${currentTab === 'trending' ? 'active' : ''}`} onClick={() => handleCurentTab('trending')}>Trending Prompts</button>
+            <button className={`prompts-button ${currentTab === 'newest' ? 'active' : ''}`} onClick={() => handleCurentTab('newest')}>Newest Prompts</button>
           </div>
-
-          <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
-            {featuredPrompts.map(({ title, price, tag, image }) => (
-              <PromptCard key={title} title={title} price={price} tag={tag} image={image} />
-            ))}
-          </div>
+          {
+            currentTab === 'feature' ?
+              <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+                {featuredPrompts.map(({ name, price, type, images }) => (
+                  <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                ))}
+              </div> :
+              currentTab === 'trending' ?
+                <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+                  {prompts.map(({ name, price, type, images }) => (
+                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                  ))}
+                </div> :
+                <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+                  {newestPrompts.map(({ name, price, type, images }) => (
+                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                  ))}
+                </div>
+          }
 
           <button className="browse-button" onClick={() => router.push('/marketplace')}>
-          {/* <Link className="browse-button" href={'/marketplace'}> */}
-            Browse Marketplace
-          {/* </Link> */}
+            <Link className="browse-button" href={'/marketplace'}>
+              Browse Marketplace
+            </Link>
           </button>
         </div>
 
@@ -84,25 +127,26 @@ export default function Home() {
 
           <CustomSwiper title="Most Popular Prompts This Month" data={monthPrompts} />
 
-          <button className="browse-button" onClick={() => router.push('/marketplace')}>
+          <Link className="browse-button" href={'/marketplace'}>
             Browse Marketplace
-          </button>
+          </Link>
         </div>
 
         <div className="blog">
           <Image src="/blogs/youtube.png" alt="youtube" width="555" height="330" />
 
-          <div>
+          <p className='flex flex-col justify-center align-middle'>
             <h2>Earn from your Prompt Engineering skills</h2>
 
-            <div>
-              <p>PromptBase is an early marketplace for DALL·E, Midjourney, Stable Diffusion & GPT-3 prompts.</p>
+            <div className='flex justify-start flex-col gap-2'>
+              <div>PromptBase is an early marketplace for DALL·E, Midjourney, Stable Diffusion & GPT-3 prompts.</div>
               <p>Sell your prompts on PromptBase and earn from your prompt crafting skills.</p>
               <p>Upload your prompt, connect with Stripe, and become a seller in just 2 minutes.</p>
             </div>
 
-            <button>Sell A Prompt</button>
-          </div>
+            <Link className="mt-2 browse-button w-1/3 align-middle justify-center flex" href={'/sell'}>
+              Sell A Prompt</Link>
+          </p>
         </div>
 
         <div className="container flex flex-col items-center mx-auto mb-36">
@@ -110,9 +154,9 @@ export default function Home() {
 
           <CustomSwiper title="Newest GPT-3 Prompts" data={gpt3Prompts} />
 
-          <button className="browse-button" onClick={() => router.push('/marketplace')}>
+          <Link className="browse-button" href={'/marketplace'}>
             Browse Marketplace
-          </button>
+          </Link>
         </div>
 
         <div className="blog flex-row-reverse">
@@ -127,7 +171,7 @@ export default function Home() {
               <p>Get 5 free generation credits every day.</p>
             </div>
 
-            <button>Generate Images</button>
+            <Link  className='browse-button w-1/3' href={'./generate'} > Generate Images</Link>
           </div>
         </div>
 
@@ -136,9 +180,9 @@ export default function Home() {
 
           <CustomSwiper title="Newest Stable Diffusion Prompts" data={diffusionPrompts} />
 
-          <button className="browse-button" onClick={() => router.push('/marketplace')}>
+          <Link className="browse-button" href={'/marketplace'}>
             Browse Marketplace
-          </button>
+          </Link>
         </div>
       </main>
     </>

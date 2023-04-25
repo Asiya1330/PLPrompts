@@ -26,9 +26,9 @@ export default function CustomSwiper({ title, type = 'prompt', data }: CustomSwi
       </div>
 
       {type === 'prompt' &&
-        (data as Prompt[]).map(({ title, price, tag, image, rating }, index) => (
+        (data as Prompt[]).map(({ name, title, price, tag, images, rating, type }, index) => (
           <SwiperSlide key={index} className="flex items-center justify-center">
-            <PromptCard title={title} price={price} tag={tag} image={image} rating={rating} />
+            <PromptCard name={name} title={title} price={price} tag={type} image={images?.length ? images[0] : ''} rating={rating} />
           </SwiperSlide>
         ))}
 

@@ -1,26 +1,25 @@
 //@ts-nocheck
-import { useRouter } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
-import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, getUserById } from '@/utils/apis';
+import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, getUserById, markFeatureUrl } from '@/utils/apis';
 import axios from 'axios';
 import Link from 'next/link';
+import { isAdmin } from '@/lib/auth';
 
 export default function SinglePrompt() {
 
     const [prompt, setPrompt] = useState();
     const { currentUser } = useContext(UserContext);
     const [promptUser, setPromptUser] = useState();
+    // const [isFeature, setIsFeature] = useState();
     const router = useRouter();
-    const { prompts } = useContext(PromptsContext);
+    const { prompts, setPrompts } = useContext(PromptsContext);
     const [isClicked, setIsClicked] = useState(false);
     const heartImageRef = useRef()
 
     const { name } = router.query;
-
-
-    useEffect
 
     useEffect(() => {
         const addPromptViews = async () => {
@@ -75,7 +74,26 @@ export default function SinglePrompt() {
             }
         }
     }
+    const handleMarkFeature = async () => {
+        if (prompt && prompt._id) {
+            const { data } = await axios.post(markFeatureUrl, { _id: prompt._id });
+            if (data.modifiedCount === 1) {
+                const updatedPrompt = { ...prompt, isFeature: true }
+                const updatedPrompts = prompts.map(item => (item._id === prompt._id) ? { ...item, isFeature: true } : item);
+                setPrompt(updatedPrompt);
+                setPrompts(updatedPrompts)
+            }
+        }
 
+    }
+    const handleOwnerProfile = () => {
+        console.log(promptUser);
+
+        router.push({
+            pathname: `/public-profile/${promptUser.username}`,
+            query: { publicProfileOwner: JSON.stringify(promptUser) }
+        }, `/public-profile/${promptUser.username}`);
+    }
     return (
         <div className='m-10 gap-1 flex flex-row'>
             {(!prompt) ? 'Loading...'
@@ -94,6 +112,10 @@ export default function SinglePrompt() {
                                 (currentUser._id === prompt.userId) &&
                                 <button>Edit prompt &#x270E;</button>
                             }
+                            {
+                                isAdmin(currentUser) && !prompt?.isFeature &&
+                                <button className='mark-feature' onClick={handleMarkFeature}>Mark Feature</button>
+                            }
                         </div>
                         <div className="promptInfo flex align-middle flex-row w-full justify-between">
                             <div className="owner-seller flex align-middle flex-row gap-5">
@@ -101,7 +123,7 @@ export default function SinglePrompt() {
                                 <div className="sellerStats flex align-middle flex-row" title='seller stats'>
                                     <img src="/icons/tag.svg" alt="" className=' w-[17px] mr-[5px]' /> <span>{prompt.purchaseCount ? prompt.purchaseCount : 0}</span>
                                 </div>
-                                <div className="promptOwner">
+                                <div className="promptOwner cursor-pointer bg-white rounded text-black p-2" onClick={handleOwnerProfile}>
                                     {promptUser?.username || 'user'}
                                 </div>
 

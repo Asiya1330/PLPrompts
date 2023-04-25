@@ -6,7 +6,9 @@ export interface PromptCardProps extends Prompt { }
 export default function PromptCard({ name, price, tag, image, rating, clickable = true }: PromptCardProps) {
   const getDirection = (rating: number | undefined) => (rating ? 'row' : 'row-reverse');
   const router = useRouter();
-  const handlePromptRoute = () => {
+  // console.log(name);
+  
+  const handlePromptRoute = () => {    
     if (clickable)
     router.push(
       `/prompt/${name}`,

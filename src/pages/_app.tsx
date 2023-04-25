@@ -5,22 +5,25 @@ import { ExtendedAppProps } from '@/helpers/interface';
 import UserProvider from '@/contexts/UserContext';
 import PromptsProvider from '@/contexts/PromptsContext';
 import { SessionProvider } from 'next-auth/react'
+import ChatContactsProvider from '@/contexts/chatContacts';
 
 export default function App({ Component, pageProps }: ExtendedAppProps) {
   return (
     <SessionProvider>
       <UserProvider>
-        <PromptsProvider>
-          <Layout>
-            {Component.auth ? (
-              <Auth>
+        <ChatContactsProvider >
+          <PromptsProvider>
+            <Layout>
+              {Component.auth ? (
+                <Auth>
+                  <Component {...pageProps} />
+                </Auth>
+              ) : (
                 <Component {...pageProps} />
-              </Auth>
-            ) : (
-              <Component {...pageProps} />
-            )}
-          </Layout>
-        </PromptsProvider>
+              )}
+            </Layout>
+          </PromptsProvider>
+        </ChatContactsProvider>
       </UserProvider>
     </SessionProvider>
   );

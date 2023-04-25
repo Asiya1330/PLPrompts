@@ -5,14 +5,15 @@ import axios from 'axios';
 import PromptCard from '@/components/PromptCard';
 import { approvePromptUrl, getNonApprovedAllPromptsUrl } from '@/utils/apis';
 import { PromptsContext } from '@/contexts/PromptsContext';
+import PromptCardExt from '@/components/PromptCardExt';
 
 const Approval = () => {
     const { currentUser } = useContext(UserContext);
     const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext);
+    // const [releaseHour, setReleaseHour] = useState();
 
-
-    const handleApprovePrompt = async (id: any) => {
-        const promptApproved = await axios.post(approvePromptUrl, { id });
+    const handleApprovePrompt = async (id: any, timeInHour: any) => {
+        const promptApproved = await axios.post(approvePromptUrl, { id, timeInHour });
         console.log(promptApproved);
 
         if (promptApproved?.data?.modifiedCount == 1) {
@@ -31,19 +32,7 @@ const Approval = () => {
             </div>
             { //@ts-ignore
                 unapprovedPrompts.length ? unapprovedPrompts?.map(({ _id, name, price, type, images, status, description }: any, idx: number) => (
-                    <div className='flex flex-row gap-3 justify-evenly'>
-                        <PromptCard clickable={false} key={idx} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
-                        <div className='details w-[60%] flex flex-col align-middle justify-evenly border-gray-300 border-2 p-5 rounded'>
-                            <div>
-                                <h1>Details:</h1>
-                                {description}
-                            </div>
-                            <div className="button flex gap-5">
-                                <button className='hover:bg-gray-400' onClick={() => handleApprovePrompt(_id)}> Approve</button>
-                                <button className='hover:bg-gray-400'> Decline</button>
-                            </div>
-                        </div>
-                    </div>
+                    <PromptCardExt idx={_id} key={_id} name={name} price={price} type={type} images={images} status={status} description={description} handleApprovePrompt={handleApprovePrompt} />
                 )) : <div className="noprndingPrompts">
                     No Pending Prompts
                 </div>

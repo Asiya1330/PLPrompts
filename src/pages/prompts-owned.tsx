@@ -7,7 +7,7 @@ import Settings from '@/components/Settings';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import React, { useContext, useState } from 'react'
 
-export default function Profile() {
+export default function PromptsOwned() {
     const [render, setRender] = useState('prompts');
 
     const renderProfileSection: any = {

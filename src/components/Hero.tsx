@@ -1,23 +1,39 @@
 //@ts-nocheck
 import PromptCard from '@/components/PromptCard';
+import { PromptsContext } from '@/contexts/PromptsContext';
 import Image from 'next/image';
-import { heroPrompts } from '@/helpers/mock';
+import { useState, useContext, useEffect } from 'react';
 
 export default function Hero() {  
+  const { prompts } = useContext(PromptsContext)
+  const [fourHighestScoredPrompt, setFourHighestScoredPrompt] = useState();
+  useEffect(() => {
+    if (prompts) {
+      const hightsMid = prompts.reduce((acc, prompt) => {
+        if (!acc[prompt.type] || acc[prompt.type].totalSum < prompt.totalSum)
+          acc[prompt.type] = prompt
+        return acc
+      }, {})
+      console.log(fourHighestScoredPrompt,'dessdx');
+      
+      setFourHighestScoredPrompt(hightsMid)
+    }
+  }, [prompts])
+
   return (
     <div className="w-full flex flex-row justify-center items-center">
       <div className="flex flex-col gap-y-32">
         <PromptCard
-          key={heroPrompts[0].title}
-          title={heroPrompts[0].title}
-          tag={heroPrompts[0].tag}
-          image={heroPrompts[0].image}
+          key={fourHighestScoredPrompt?.['GPT']?.name}
+          name={fourHighestScoredPrompt?.['GPT']?.name}
+          tag={fourHighestScoredPrompt?.['GPT']?.type}
+          image={fourHighestScoredPrompt?.['GPT']?.images?.length ? fourHighestScoredPrompt['GPT']?.images[0] : ''}
         />
         <PromptCard
-          key={heroPrompts[1].title}
-          title={heroPrompts[1].title}
-          tag={heroPrompts[1].tag}
-          image={heroPrompts[1].image}
+          key={fourHighestScoredPrompt?.['Midjourney']?.name}
+          name={fourHighestScoredPrompt?.['Midjourney']?.name}
+          tag={fourHighestScoredPrompt?.['Midjourney']?.type}
+          image={fourHighestScoredPrompt?.['Midjourney']?.images?.length ? fourHighestScoredPrompt['Midjourney']?.images[0] : ''}
         />
       </div>
 
@@ -55,17 +71,17 @@ export default function Hero() {
       </div>
       <div className="flex flex-col gap-y-32">
         <PromptCard
-          key={heroPrompts[2].title}
-          title={heroPrompts[2].title}
-          tag={heroPrompts[2].tag}
-          image={heroPrompts[2].image}
+          key={fourHighestScoredPrompt?.['DALL-E']?.name}
+          name={fourHighestScoredPrompt?.['DALL-E']?.name}
+          tag={fourHighestScoredPrompt?.['DALL-E']?.type}
+          image={fourHighestScoredPrompt?.['DALL-E']?.images?.length ? fourHighestScoredPrompt?.['DALL-E']?.images[0] : ''}
         />
         <div className="ml-10">
           <PromptCard
-            key={heroPrompts[3].title}
-            title={heroPrompts[3].title}
-            tag={heroPrompts[3].tag}
-            image={heroPrompts[3].image}
+            key={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
+            name={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
+            tag={fourHighestScoredPrompt?.['Stable Diffusion']?.type}
+            image={fourHighestScoredPrompt?.['Stable Diffusion']?.images?.length ? fourHighestScoredPrompt['Stable Diffusion']?.images[0] : ''}
           />
         </div>
       </div>

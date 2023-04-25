@@ -23,7 +23,6 @@ export const UserContext = createContext<UserContextType>({
 })
 
 export default function UserProvider({ children }: any) {
-
     // const [currentUser, setCurrentUser] = useState(UserContext);
     const [currentUser, setCurrentUser] = useState<UserContextType | null>();
     const { data: session } = useSession();

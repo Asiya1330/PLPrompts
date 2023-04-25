@@ -3,19 +3,19 @@ import { io } from "socket.io-client";
 import React, { useState, useRef, useEffect, RefObject, useContext } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import axios from 'axios';
-import { allUsersRoute, host } from '../../utils/apis'
+import { addChatUrl, allUsersRoute, getChatUrl, host } from '../../utils/apis'
 import Contacts from '@/components/Contacts';
 import Welcome from '@/components/Welcome';
 import ChatContainer from '@/components/ChatContainer';
+import { ChatContactsContext } from '@/contexts/chatContacts';
 
 const Chat: NextPage = () => {
   const socket = useRef();
 
-  //****** */
-  const { currentUser, setCurrentUser } = useContext(UserContext);
-  const [contacts, setContacts] = useState([]);
+  const { currentUser } = useContext(UserContext);
+  // const [contacts, setContacts] = useState([]);
+  const { contacts } = useContext(ChatContactsContext);
   const [currentChat, setCurrentChat] = useState(undefined);
-  console.log(contacts, 'contavt');
 
 
   useEffect(() => {
@@ -34,8 +34,8 @@ const Chat: NextPage = () => {
       //@ts-ignore
       if (currentUser?._id) {
         //@ts-ignore
-        const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-        setContacts(data.data);
+        // const { data } = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+        // setContacts(data);
       }
       else {
         console.log('id does not exist on currentUser');

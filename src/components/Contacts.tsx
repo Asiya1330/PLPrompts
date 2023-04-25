@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 export default function Contacts({ contacts, changeChat }:any) {
   const router = useRouter();
   const [currentSelected, setCurrentSelected] = useState(undefined);
-  const { setCurrentUser, currentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
   console.log(contacts, 'inside contact');
 
   useEffect(() => {

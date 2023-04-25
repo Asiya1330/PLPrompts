@@ -12,17 +12,17 @@ export default function ChatContainer({ currentChat, socket }: any) {
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [msg, setMsg] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
     };
 
     const handleEmojiClick = (event: any, emojiObject: any) => {
-        console.log(event, emojiObject, 'lll');
-
         let message = msg;
         message += event.emoji;
         setMsg(message);
     };
+    
     const sendChat = (event: ChangeEvent) => {
         event.preventDefault();
         if (msg.length > 0) {
