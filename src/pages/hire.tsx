@@ -47,4 +47,4 @@ const Hire: NextPageWithAuth = () => {
 
 export default Hire;
 
-Hire.auth = true;
+// Hire.auth = true;

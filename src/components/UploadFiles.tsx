@@ -21,12 +21,19 @@ export default function UploadFiles({ userId, setFileUrls, setAllFiles, allFiles
     }
 
     const addFiles = async (e: any) => {
-        const file = e.target.files[0];
-        setFiles([...files, file]);
-        setAllFiles([...allFiles, file])
+        console.log(e, allFiles,'anybeh');
+        const selectedFiles = e.target.files;
+        setFiles([...files, ...selectedFiles]);
+        setAllFiles([...allFiles, ...selectedFiles])
         let formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', selectedFiles);
         formData.append('userId', userId);
+        // const file = e.target.files[0];
+        // setFiles([...files, file]);
+        // setAllFiles([...allFiles, file])
+        // let formData = new FormData();
+        // formData.append('file', file);
+        // formData.append('userId', userId);
     }
     return (
         <div className="upload-section w-full flex flex-col gap-y-2">
@@ -43,8 +50,6 @@ export default function UploadFiles({ userId, setFileUrls, setAllFiles, allFiles
                 "flexWrap": "wrap"
             }}>
                 {allFiles && allFiles.map((file: any, idx: any) => {
-                    console.log(file, ';ncdj');
-
                     return <UploadImageContainer key={idx} file={file} handleDelete={updateFilesAfterDeletion} />
                 })
 
@@ -65,7 +70,7 @@ export default function UploadFiles({ userId, setFileUrls, setAllFiles, allFiles
                         margin: '20px 0'
                     }} >&#43;</span>
                 </label>
-                <input type="file" name="" id="fileInput" hidden onChange={addFiles} />
+                <input type="file" name="" id="fileInput" hidden onChange={addFiles} multiple/>
             </div>
         </div >
     )

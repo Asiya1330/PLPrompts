@@ -81,6 +81,7 @@ const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
       }
     } catch (e) {
       console.log('SOME ERROR HAPPENED', e);
+      alert(e)
     }
   });
 

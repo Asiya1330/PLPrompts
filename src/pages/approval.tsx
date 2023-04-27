@@ -12,8 +12,8 @@ const Approval = () => {
     const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext);
     // const [releaseHour, setReleaseHour] = useState();
 
-    const handleApprovePrompt = async (id: any, timeInHour: any) => {
-        const promptApproved = await axios.post(approvePromptUrl, { id, timeInHour });
+    const handleApprovePrompt = async (id: any, timeInHour: any, selectedCategories: any) => {
+        const promptApproved = await axios.post(approvePromptUrl, { id, timeInHour, selectedCategories });
         console.log(promptApproved);
 
         if (promptApproved?.data?.modifiedCount == 1) {

@@ -22,7 +22,7 @@ export default function ChatContainer({ currentChat, socket }: any) {
         message += event.emoji;
         setMsg(message);
     };
-    
+
     const sendChat = (event: ChangeEvent) => {
         event.preventDefault();
         if (msg.length > 0) {
@@ -44,14 +44,14 @@ export default function ChatContainer({ currentChat, socket }: any) {
         asyncsetMessages()
     }, [currentChat]);
 
-    const handleSendMsg = async (msg:any) => {
+    const handleSendMsg = async (msg: any) => {
         let data = currentUser;
         console.log(currentUser, 'cindkj');
-            socket.current.emit("send-msg", {
-                to: currentChat._id,
-                from: data._id,
-                msg,
-            });
+        socket.current.emit("send-msg", {
+            to: currentChat._id,
+            from: data._id,
+            msg,
+        });
 
 
         await axios.post(sendMessageRoute, {

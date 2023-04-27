@@ -1,8 +1,8 @@
-//@ts-nocheck
-interface FinalProps {
-  handleClick: any;
-}
-export default function Final({ handleClick }: FinalProps) {
+import { useRouter } from "next/router";
+
+export default function Final() {
+  const router = useRouter()
+  const handleRoute = () => router.push('/marketplace')
   return (
     <div className="grow flex flex-col items-center py-32">
       <div className="flex flex-col items-center justify-center max-w-[540px] mb-16">
@@ -14,9 +14,9 @@ export default function Final({ handleClick }: FinalProps) {
       </div>
       <button
         className="px-16 py-3 bg-yellow text-black border-2"
-        onClick={() => handleClick()}
+        onClick={handleRoute}
       >
-        Go Back
+        Go to Marketplace
       </button>
     </div>
   );

@@ -23,7 +23,7 @@ export default function SinglePrompt() {
 
     useEffect(() => {
         const addPromptViews = async () => {
-            if (currentUser._id && prompt && prompt._id) {
+            if (currentUser?._id && prompt && prompt._id) {
                 const { data } = await axios.get(`${GetPromptViewsByUserId}/${currentUser._id}/${prompt._id}`)
                 if (!data.length) {
                     await axios.post(InsertViewPromptUrl, {
@@ -88,13 +88,15 @@ export default function SinglePrompt() {
     }
     const handleOwnerProfile = () => {
         console.log(promptUser);
-
+        if (promptUser && promptUser?.username)
         router.push({
             pathname: `/public-profile/${promptUser.username}`,
             query: { publicProfileOwner: JSON.stringify(promptUser) }
         }, `/public-profile/${promptUser.username}`);
     }
-    return (
+
+    if(!promptUser) return <div>Loading...</div>
+    else return (
         <div className='m-10 gap-1 flex flex-row'>
             {(!prompt) ? 'Loading...'
                 :

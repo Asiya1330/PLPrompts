@@ -1,6 +1,6 @@
-//@ts-nocheck
-import React, { createContext, useEffect, useState } from 'react'
+// //@ts-nocheck
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { createContext, useState, useEffect } from "react";
 
 
 export type IUser = {

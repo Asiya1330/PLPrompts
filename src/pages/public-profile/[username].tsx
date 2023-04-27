@@ -1,6 +1,7 @@
 import CustomSwiper from '@/components/CustomSwiper';
 import { UserContext } from '@/contexts/UserContext';
-import { addChatUrl, addFollowerUrl, getAllPrompts, getLikesViewsPurchasesAndRank } from '@/utils/apis';
+import { ChatContactsContext } from '@/contexts/chatContactsContext';
+import { addChatUrl, addFollowerUrl, getAllPrompts, getBadgesByUserIDUrl, getLikesViewsPurchasesAndRank } from '@/utils/apis';
 import axios from 'axios';
 import { useRouter } from 'next/router'
 import React, { useEffect, useState, useContext } from 'react'
@@ -9,8 +10,10 @@ const PublicProfile = () => {
     const [profileOwner, setProfileOwner] = useState();
     const router = useRouter();
     const { currentUser } = useContext(UserContext);
+    const { contacts, setContacts } = useContext(ChatContactsContext)
     const [mostPopular, setMostPopular] = useState();
     const [newest, setNewest] = useState();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (router.isReady) {
@@ -25,12 +28,33 @@ const PublicProfile = () => {
             // else{
             const getOwnerMetaData = async () => {
                 const { data } = await axios.get(`${getLikesViewsPurchasesAndRank}?ownername=${username}`)
-                setProfileOwner(data[0])
+                const badgesData = await axios.get(`${getBadgesByUserIDUrl}?ownerId=${data[0]?._id}`);
+                if (badgesData['data']?.length) {
+                    const updateProfileOwnerMetaData = { ...data[0], badges: badgesData['data'] };
+                    console.log(updateProfileOwnerMetaData);
+
+                    setProfileOwner(updateProfileOwnerMetaData)
+                }
+                else setProfileOwner(data[0]);
             }
             getOwnerMetaData();
         }
         // }
     }, [router.isReady])
+
+    useEffect(() => {
+        const getBadges = async () => {
+            if (profileOwner && profileOwner?._id) {
+                const { data } = await axios.get(`${getBadgesByUserIDUrl}?ownerId=${profileOwner?._id}`);
+
+                if (data?.length) {
+                    const updateProfileOwnerMetaData = { ...profileOwner, badges: data };
+                    setProfileOwner(updateProfileOwnerMetaData)
+                }
+            }
+        }
+        getBadges()
+    }, [])
 
     useEffect(() => {
         if (profileOwner?._id) {
@@ -50,44 +74,46 @@ const PublicProfile = () => {
                     }
                 })
                 setNewest(newestRes.data)
-                console.log(newestRes);
             }
             getpopNewest();
         }
     }, [profileOwner])
 
     const handleFollow = async () => {
+        setLoading(true)
         if (profileOwner?._id !== currentUser?._id) {
             const { data } = await axios.post(addFollowerUrl, {
                 userId: profileOwner?._id,
                 followerId: currentUser?._id
             })
+            if (!data?.msg) {
+                const upateProfileOwner = { ...profileOwner, followers: profileOwner.followers + 1 };
+                setProfileOwner(upateProfileOwner)
+            }
         }
         else alert('You cannot follow yourself')
+        setLoading(false)
     }
 
     const handleMessage = async () => {
-        
+        setLoading(true)
         if (profileOwner?._id !== currentUser?._id) {
-            const {data} = await axios.post(addChatUrl, {
+            const { data } = await axios.post(addChatUrl, {
                 userId: currentUser?._id,
                 chatId: profileOwner?._id,
             })
-            console.log(data);
-            
-            // router.push('/chat')
+            const updatedContacts = data.map((item: any) => {
+                item = item['chat_users'][0];
+                return item
+            })
+            setContacts(updatedContacts)
+            router.push('/chat')
         }
+        setLoading(false)
     }
-    const badges = [
-        { icon: "⛵", text: "Midjourney" },
-        { icon: "🎨", text: " Unique Styles" },
-        { icon: "👩", text: "People" },
-        { icon: "🦊", text: "Cartoons" },
-        { icon: "✏️", text: "Drawing" },
-    ]
 
-
-    return (
+    if (loading) return <div className='m-auto text-3xl'>Loading....</div>
+    else return (
         <div className='m-auto'>
             <div className="profile-section w-[1062px] m-5">
                 <div className="profile-background-pic">
@@ -127,10 +153,11 @@ const PublicProfile = () => {
                                 })}</div>
                         </div>
                     </div>
-                    <div className="badges-containe flex flex-row align-middle justify-start gap-5 ">
-                        {badges.map((badge) => {
-                            return <div className="badge bg-gray-500 rounded p-1"> <span>{badge.icon}</span> {badge.text}</div>
-                        })
+                    <div className="badges-containe flex flex-row align-middle justify-start gap-3 ">
+                        {
+                            profileOwner?.badges && profileOwner?.badges?.map(({ _id, purchaseCount }) => {
+                                return <div className="badge bg-gray-500 rounded p-1 flex flex-row gap-2 p-2 justify-center align-middle items-center"> <span><img src="/tags/gpt3.png" alt="" /></span> {_id}</div>
+                            })
                         }
 
                     </div>

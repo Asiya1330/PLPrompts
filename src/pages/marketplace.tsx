@@ -5,35 +5,85 @@ import { useState, useEffect, useContext } from 'react';
 import PromptCard from '@/components/PromptCard';
 import clsx from 'classnames';
 import { PromptsContext } from '@/contexts/PromptsContext';
+import axios from 'axios';
+import { getAllPrompts, getAllPromptsByHourlyFactor } from '@/utils/apis';
 
 export default function Marketplace() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortByCaption, setSortByCaption] = useState('trending');
+  const [sortByCaption, setSortByCaption] = useState('Trending');
+
+  const [categoryKey, setCategoryKey] = useState('All');
+  const [promptKey, setPromptKey] = useState('All');
+  const [filteredPrompts, setFilteredPrompts] = useState();
+  const [sortByKey, setSortByKey] = useState('Trending');
+  const [loading, setLoading] = useState()
+
+
   const [filterList, setFilterList] = useState<{
     [section: string]: { [key: string]: boolean };
   }>({
     sortBy: {
-      trending: true,
+      Trending: true,
     },
     prompts: {
-      dalle: true,
+      All: true,
     },
     categories: {
-      threeD: true,
+      All: true,
     },
   });
 
-  const { prompts } = useContext(PromptsContext);
-  console.log(prompts, 'promscd ');
+  const { prompts, setPrompts } = useContext(PromptsContext);
 
-  const handleUpdateFilter = (section: string, key: string, value: boolean) => {
+  const handleUpdateFilter = async (section: string, key: string, value: boolean) => {
+    setLoading(true)
+    if (section === 'prompts') {
+      // setSectionPrompts(section)
+      setPromptKey(key)
+    }
+    else if (section === 'categories') {
+      setCategoryKey(key)
+      // setSectionCats(section)
+    }
+    else {
+      if (key !== 'Trending') {
+        const { data } = await axios.get(`${getAllPrompts}?condition=popular`);
+        setPrompts(data);
+      }
+      else {
+        const { data } = await axios.get(getAllPromptsByHourlyFactor);
+        setPrompts(data);
+      }
+      setSortByCaption(key)
+    }
     setFilterList((preFilter) => ({
       ...preFilter,
       [section]: {
         [key]: value,
       },
     }));
+    setLoading(false)
   };
+
+  useEffect(() => {
+    if (prompts?.length) {
+      const updateFilterPrompts = prompts.filter((prompt: any) => {
+        if (prompt?.categories && promptKey !== 'All' && categoryKey !== 'All')
+          return prompt?.categories.includes(categoryKey) && prompt.type === promptKey
+        else if (prompt?.categories && promptKey === 'All' && categoryKey !== 'All')
+          return prompt?.categories.includes(categoryKey)
+        else if (promptKey !== 'All' && categoryKey === 'All')
+          return prompt.type === promptKey
+        else if (promptKey === 'All' && categoryKey === 'All') {
+          return true
+        }
+        else
+          return false
+      }
+      );
+      setFilteredPrompts(updateFilterPrompts)
+    }
+  }, [promptKey, categoryKey, prompts])
 
   const handleClick = (direction: string) => {
     let newPage = currentPage;
@@ -47,84 +97,90 @@ export default function Marketplace() {
         <div id="filterSection" className="w-[275px] shrink-0 border-r-[0.5px] border-[#FFFFFF66]">
           <div className="flex flex-col">
             {Object.entries(FilterSections).map(([section, { tagImg, tagTitle, filterLists }], index) => (
-              <FilterSection
-                key={section}
-                filter={filterList[section]}
-                tagImg={tagImg}
-                tag={tagTitle}
-                filterLists={filterLists}
-                onChange={(key, value) => handleUpdateFilter(section, key, value)}
-              />
+              <>
+                <FilterSection
+                  key={section}
+                  filter={filterList[section]}
+                  tagImg={tagImg}
+                  tag={tagTitle}
+                  filterLists={filterLists}
+                  onChange={(key, value) => handleUpdateFilter(section, key, value)}
+                />
+              </>
             ))}
           </div>
         </div>
-        <div id="trendingPrompts" className="flex flex-col pt-8 px-8 w-full mx-auto">
-          <h3 className="pb-8">{sortByCaption === 'trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
-          <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
+        {(loading) ? <div className='mr-auto ml-auto text-xl mt-10'>Loading...</div> :
 
-            { //@ts-ignore
-              prompts && prompts?.map(({ name, price, type, images }: any, idx: number) => (
-                <PromptCard key={idx} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
-              ))}
+
+          <div id="trendingPrompts" className="flex flex-col pt-8 px-8 w-full mx-auto">
+            <h3 className="pb-8">{sortByCaption === 'Trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
+            <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
+
+              { //@ts-ignore
+                filteredPrompts && filteredPrompts?.map(({ name, price, type, images }: any, idx: number) => (
+                  <PromptCard key={idx} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
+                ))}
+            </div>
+            {//@ts-ignore
+              filteredPrompts && filteredPrompts.length === 0 && (
+                <div className="w-full">
+                  <h3 className="text-center mx-auto">No Prompts</h3>
+                </div>
+              )}
+
+            <div className=" flex gap-x-2 pb-14 ml-auto">
+              <button className="slider-button" onClick={() => handleClick('back')}>
+                <Icon>left</Icon>
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 1 })}
+                onClick={() => setCurrentPage(1)}
+              >
+                1
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 2 })}
+                onClick={() => setCurrentPage(2)}
+              >
+                2
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 3 })}
+                onClick={() => setCurrentPage(3)}
+              >
+                3
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 4 })}
+                onClick={() => setCurrentPage(4)}
+              >
+                4
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 5 })}
+                onClick={() => setCurrentPage(5)}
+              >
+                5
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 6 })}
+                onClick={() => setCurrentPage(6)}
+              >
+                6
+              </button>
+              <button
+                className={clsx('slider-button', { 'bg-white text-black': currentPage === 7 })}
+                onClick={() => setCurrentPage(7)}
+              >
+                7
+              </button>
+              <button className="slider-button" onClick={() => handleClick('next')}>
+                <Icon>right</Icon>
+              </button>
+            </div>
           </div>
-          {//@ts-ignore
-            prompts && prompts.length === 0 && (
-              <div className="w-full">
-                <h3 className="text-center mx-auto">No Prompts</h3>
-              </div>
-            )}
-            
-          <div className=" flex gap-x-2 pb-14 ml-auto">
-            <button className="slider-button" onClick={() => handleClick('back')}>
-              <Icon>left</Icon>
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 1 })}
-              onClick={() => setCurrentPage(1)}
-            >
-              1
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 2 })}
-              onClick={() => setCurrentPage(2)}
-            >
-              2
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 3 })}
-              onClick={() => setCurrentPage(3)}
-            >
-              3
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 4 })}
-              onClick={() => setCurrentPage(4)}
-            >
-              4
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 5 })}
-              onClick={() => setCurrentPage(5)}
-            >
-              5
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 6 })}
-              onClick={() => setCurrentPage(6)}
-            >
-              6
-            </button>
-            <button
-              className={clsx('slider-button', { 'bg-white text-black': currentPage === 7 })}
-              onClick={() => setCurrentPage(7)}
-            >
-              7
-            </button>
-            <button className="slider-button" onClick={() => handleClick('next')}>
-              <Icon>right</Icon>
-            </button>
-          </div>
-        </div>
+        }
       </div>
     </>
   );

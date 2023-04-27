@@ -1,23 +1,12 @@
-//@ts-nocheck
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head';
 import Image from 'next/image';
 import PromptCard from '@/components/PromptCard';
 import { FEATURED_MAP } from '@/helpers/constants';
-import {
-  // featuredPrompts,
-  weekPrompts,
-  monthPrompts,
-  // midjourneyPrompts,
-  // gpt3Prompts,
-  // dallePrompts,
-  // diffusionPrompts,
-} from '@/helpers/mock';
 import { useRouter } from 'next/router';
 
 import CustomSwiper from '@/components/CustomSwiper';
 import Hero from '@/components/Hero';
-import { useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import Link from 'next/link';
 
@@ -29,7 +18,7 @@ export default function Home() {
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
 
-  const { featuredPrompts, newestPrompts, prompts } = useContext(PromptsContext)
+  const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
 
   useEffect(() => {
     const midhur = newestPrompts.filter((prompt) => prompt.type === 'Midjourney')
@@ -42,8 +31,6 @@ export default function Home() {
 
     const dalle = newestPrompts.filter((prompt) => prompt.type === 'DALL-E')
     setDallEPrompts(dalle);
-    console.log(midhur, gpt, diffusion, dalle);
-
 
   }, [newestPrompts])
 
@@ -123,19 +110,20 @@ export default function Home() {
         </div>
 
         <div className="container flex flex-col items-center mx-auto mb-36">
-          <CustomSwiper title="Most Popular Prompts This Week" data={weekPrompts} />
+          <CustomSwiper title="Most Popular Prompts This Week" data={weeklySortedPrompts} />
 
-          <CustomSwiper title="Most Popular Prompts This Month" data={monthPrompts} />
+          <CustomSwiper title="Most Popular Prompts This Month" data={monthlySortedPrompts} />
 
           <Link className="browse-button" href={'/marketplace'}>
             Browse Marketplace
           </Link>
         </div>
+        <CustomSwiper title="Most Popular Prompts This Month" data={monthlySortedPrompts} />
 
         <div className="blog">
           <Image src="/blogs/youtube.png" alt="youtube" width="555" height="330" />
 
-          <p className='flex flex-col justify-center align-middle'>
+          <div className='flex flex-col justify-center align-middle'>
             <h2>Earn from your Prompt Engineering skills</h2>
 
             <div className='flex justify-start flex-col gap-2'>
@@ -146,7 +134,7 @@ export default function Home() {
 
             <Link className="mt-2 browse-button w-1/3 align-middle justify-center flex" href={'/sell'}>
               Sell A Prompt</Link>
-          </p>
+          </div>
         </div>
 
         <div className="container flex flex-col items-center mx-auto mb-36">
@@ -171,7 +159,7 @@ export default function Home() {
               <p>Get 5 free generation credits every day.</p>
             </div>
 
-            <Link  className='browse-button w-1/3' href={'./generate'} > Generate Images</Link>
+            <Link className='browse-button w-1/3' href={'./generate'} > Generate Images</Link>
           </div>
         </div>
 

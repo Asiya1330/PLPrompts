@@ -6,7 +6,6 @@ export default function Contacts({ contacts, changeChat }:any) {
   const router = useRouter();
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const { currentUser } = useContext(UserContext);
-  console.log(contacts, 'inside contact');
 
   useEffect(() => {
     const getSessionasync = async () => {

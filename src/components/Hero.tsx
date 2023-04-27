@@ -1,12 +1,22 @@
-//@ts-nocheck
+// //@ts-nocheck
 import PromptCard from '@/components/PromptCard';
 import { PromptsContext } from '@/contexts/PromptsContext';
+import { UserContext } from '@/contexts/UserContext';
+import { ChatContactsContext } from '@/contexts/chatContactsContext';
+import { addChatUrl } from '@/utils/apis';
+import axios from 'axios';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useState, useContext, useEffect } from 'react';
 
-export default function Hero() {  
+export default function Hero() {
+
   const { prompts } = useContext(PromptsContext)
   const [fourHighestScoredPrompt, setFourHighestScoredPrompt] = useState();
+  const { currentUser } = useContext(UserContext)
+  const { setContacts } = useContext(ChatContactsContext)
+  const router = useRouter();
+  
   useEffect(() => {
     if (prompts) {
       const hightsMid = prompts.reduce((acc, prompt) => {
@@ -14,11 +24,27 @@ export default function Hero() {
           acc[prompt.type] = prompt
         return acc
       }, {})
-      console.log(fourHighestScoredPrompt,'dessdx');
-      
+      console.log(fourHighestScoredPrompt, 'dessdx');
+
       setFourHighestScoredPrompt(hightsMid)
     }
   }, [prompts])
+
+  const handleSendToSeller = async () => {
+    if (fourHighestScoredPrompt?.['PromptBase']?.userId !== currentUser?._id) {
+      const { data } = await axios.post(addChatUrl, {
+        userId: currentUser?._id,
+        chatId: fourHighestScoredPrompt?.['PromptBase']?.userId,
+      })
+      const updatedContacts = data.map((item: any) => {
+        item = item['chat_users'][0];
+        return item
+      })
+      setContacts(updatedContacts)
+
+      router.push('/chat')
+    }
+  }
 
   return (
     <div className="w-full flex flex-row justify-center items-center">
@@ -40,15 +66,16 @@ export default function Hero() {
       <div className="flex flex-col justify-center items-center">
         <h2 className="py-10 gradient-text">Expert prompts marketplace</h2>
         <div className="flex flex-col bg-white rounded-lg px-3 py-4 max-w-[270px] h-fit justify-center items-center mt-4">
-          <Image src="/hero/hero5.png" width="220" height="215" alt="freePrompt" />
-          <p className="text-black text-2xl font-bold text-center pt-4">Kaleidoscope Artistic Tiles</p>
-          <h2 className="text-black font-bold my-4">$2.99</h2>
-          <button
-            className="bg-[#F3848A] my-6 py-3 px-12 rouned-full text-black
-            font-semibold border-2 border-black hover:bg-slate-700 transition duration-200 ease-in-out"
-          >
-            Buy Now
+          <Image src={fourHighestScoredPrompt?.['PromptBase']?.images[0] ? fourHighestScoredPrompt?.['PromptBase']?.images[0] : '/hire/avatar-diffusion2 - Copy.png'} width="220" height="215" alt="freePrompt" />
+          <p className="text-black text-2xl font-bold text-center pt-4">{fourHighestScoredPrompt?.['PromptBase'].name}</p>
+          <h2 className="text-black font-bold my-4">$0.00</h2>
+          {/* <Link href={{ pathname: '/payment', query: { amount: '0', promptId: fourHighestScoredPrompt?.['PromptBase']?._id } }}> */}
+          <button onClick={handleSendToSeller} className='getPrompt bg-[#F3848A] my-6 py-3 px-12 rouned-full text-black
+            font-semibold border-2 border-black hover:bg-slate-700 transition duration-200 ease-in-out"'>
+            Free Prompt
           </button>
+          {/* </Link> */}
+
           <div className="flex flex-row pt-4 gap-4">
             <div className="border-[1px] text-black border-gray-400 w-fit h-fit rounded-lg flex flex-col px-4 py-2 justify-center items-center">
               <h3 className="">22</h3>

@@ -11,7 +11,11 @@ export const PromptsContext = createContext({
     featuredPrompts: [],
     setFeaturedPrompts: () => null,
     newestPrompts: [],
-    setNewestPrompts: () => null
+    setNewestPrompts: () => null,
+    monthlySortedPrompts: [],
+    setMonthlySortedPrompts: () => null,
+    weeklySortedPrompts: [],
+    setWeeklySortedPrompts: () => null
 })
 
 export default function PromptsProvider({ children }) {
@@ -20,6 +24,8 @@ export default function PromptsProvider({ children }) {
     const [unapprovedPrompts, setUnapprovedPrompts] = useState([]);
     const [featuredPrompts, setFeaturedPrompts] = useState([]);
     const [newestPrompts, setNewestPrompts] = useState([]);
+    const [monthlySortedPrompts, setMonthlySortedPrompts] = useState([])
+    const [weeklySortedPrompts, setWeeklySortedPrompts] = useState([])
 
     useEffect(() => {
         const getNotApprovedPrompts = async () => {
@@ -56,12 +62,43 @@ export default function PromptsProvider({ children }) {
     useEffect(() => {
         const getAllPrompt = async () => {
             const { data } = await axios.get(getAllPromptsByHourlyFactor);
-            console.log(data);
-
             setPrompts(data);
         }
         getAllPrompt();
     }, [])
+
+    useEffect(() => {
+        if (prompts) {
+            const copy = [...prompts] //sort is mutating function, so create copy of state, then sort
+            const monthlySortedArray = copy.sort((a, b) => {
+                if (a.monthlyScore > b.monthlyScore) {
+                    return -1;
+                }
+                if (a.monthlyScore < b.monthlyScore) {
+                    return 1;
+                }
+                return 0;
+            });
+            setMonthlySortedPrompts(monthlySortedArray);
+        }
+    }, [prompts])
+
+    useEffect(() => {
+        if (prompts) {
+            const copy = [...prompts]  //sort is mutating function, so create copy of state, then sort
+
+            const weeklySortedArray = copy.sort((a, b) => {
+                if (a.weeklyScore > b.weeklyScore) {
+                    return -1;
+                }
+                if (a.weeklyScore < b.weeklyScore) {
+                    return 1;
+                }
+                return 0;
+            });
+            setWeeklySortedPrompts(weeklySortedArray);
+        }
+    }, [prompts])
 
     const value = {
         prompts,
@@ -71,7 +108,9 @@ export default function PromptsProvider({ children }) {
         setFeaturedPrompts,
         featuredPrompts,
         newestPrompts,
-        setNewestPrompts
+        setNewestPrompts,
+        weeklySortedPrompts,
+        monthlySortedPrompts
     };
 
     return (

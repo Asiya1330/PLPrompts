@@ -16,7 +16,6 @@ import { insertPrompt, uploadImageByUserIdAndFile } from '@/utils/apis';
 
 const Sell: NextPageWithAuth = () => {
   const { currentUser } = useContext(UserContext)
-  const { prompts, setPrompts } = useContext(PromptsContext)
   const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext)
   const [currentStep, setCurrentStep] = useState(1);
   const [userData, setUserData] = useState('');
@@ -37,8 +36,25 @@ const Sell: NextPageWithAuth = () => {
   const [fileUrls, setFileUrls] = useState();
   const [allFiles, setAllFiles] = useState([])
   const [profileLink, setProfileLink] = useState();
-  const [allFilesUrl, setAllFilesUrls] = useState([])
+
+  const [gpt_cat, setgpt_cat] = useState('Chat (ChatGPT)');
+  const [testing_prompt, settesting_prompt] = useState();
+  const [engine, setengine] = useState('text-davinci-003');
+  const [preview_output, setpreview_output] = useState(null);
+  const [preview_input, setpreview_input] = useState(null);
+  const [sd_model, setsd_model] = useState('Stable Diffusion v2.0');
+  const [sd_sampler, setsd_sampler] = useState('k_euler');
+  const [sd_img_width, setsd_img_width] = useState(512);
+  const [sd_img_height, setsd_img_height] = useState(512);
+  const [sd_steps, setsd_steps] = useState(150);
+  const [sd_cfg_scale, setsd_cfg_scale] = useState(2.5);
+  const [sd_seed, setsd_seed] = useState(null);
+  const [sd_clip_guide, setsd_clip_guide] = useState(false);
+  const [sd_neg_prompt, setsd_neg_prompt] = useState(null);
+
   //
+
+  const [loading, setLoading] = useState(false)
 
   const displayStep = (step: number) => {
     switch (step) {
@@ -58,6 +74,7 @@ const Sell: NextPageWithAuth = () => {
           setName={setName} />;
       case 4:
         return <PromptFile
+          type={type}
           prompt={prompt}
           setPrompt={setPrompt}
           promptIns={promptIns}
@@ -68,6 +85,34 @@ const Sell: NextPageWithAuth = () => {
           setFileUrls={setFileUrls}
           profileLink={profileLink}
           setProfileLink={setProfileLink}
+          gpt_cat={gpt_cat}
+          setgpt_cat={setgpt_cat}
+          testing_prompt={testing_prompt}
+          settesting_prompt={settesting_prompt}
+          engine={engine}
+          setengine={setengine}
+          preview_output={preview_output}
+          setpreview_output={setpreview_output}
+          preview_input={preview_input}
+          setpreview_input={setpreview_input}
+          sd_model={sd_model}
+          setsd_model={setsd_model}
+          sd_sampler={sd_sampler}
+          setsd_sampler={setsd_sampler}
+          sd_img_width={sd_img_width}
+          setsd_img_width={setsd_img_width}
+          sd_img_height={sd_img_height}
+          setsd_img_height={setsd_img_height}
+          sd_steps={sd_steps}
+          setsd_steps={setsd_steps}
+          sd_cfg_scale={sd_cfg_scale}
+          setsd_cfg_scale={setsd_cfg_scale}
+          sd_seed={sd_seed}
+          setsd_seed={setsd_seed}
+          sd_clip_guide={sd_clip_guide}
+          setsd_clip_guide={setsd_clip_guide}
+          sd_neg_prompt={sd_neg_prompt}
+          setsd_neg_prompt={setsd_neg_prompt}
         />;
       case 5:
         return <GetPaid />;
@@ -90,9 +135,23 @@ const Sell: NextPageWithAuth = () => {
   }, [currentStep]);
 
   useEffect(() => {
-    console.log(allFilesUrl, 'updatd');
+    if (type && type !== 'GPT') {
+      console.log('xs');
 
-  }, [allFilesUrl])
+      setgpt_cat(null)
+      setengine(null)
+    }
+    if (type && type !== 'Stable Diffusion') {
+      setsd_model(null)
+      setsd_sampler(null)
+      setsd_img_width(null)
+      setsd_img_height(null)
+      setsd_steps(null)
+      setsd_cfg_scale(null)
+      setsd_clip_guide(null)
+    }
+
+  }, [type])
 
   const addAllFilesToS3 = async (allFiles: any) => {
     const urls = await Promise.all(allFiles.map(async (file: any) => {
@@ -112,27 +171,43 @@ const Sell: NextPageWithAuth = () => {
   }
 
   const handleClick = async (direction: string) => {
+    console.log(gpt_cat, sd_model);
+
     if (currentStep == 3 && (!type || !price || !description || !name)) {
       return alert('Please fill all fields before moving to next step')
     }
-    if (currentStep == 4 && (!prompt || !profileLink || !promptIns)) {
+
+
+    if (currentStep == 4 && type === 'GPT' && (!prompt || !promptIns || !preview_input || !preview_output || !engine || !testing_prompt || !gpt_cat)) {
+      console.log(prompt, promptIns, preview_input, preview_output, engine, testing_prompt, gpt_cat)
+
       return alert('Please fill all fields before moving to next step')
     }
-    if (currentStep == 4 && allFiles.length < 5) {
-      return alert('Please upload minimum 5 images')
+    if (currentStep == 4 && type === 'DALL-E' && (!prompt || !promptIns || allFiles.length < 5 || allFiles.length > 9 || !testing_prompt || !profileLink)) {
+      console.log(prompt, promptIns, preview_input, profileLink, preview_output, engine, testing_prompt, gpt_cat)
+
+      return alert('Please fill all fields before moving to next step')
     }
-    if (currentStep == 4 && allFiles.length > 9) {
-      return alert('You cannot upload more than 9 images')
+    if (currentStep == 4 && type === 'Midjourney' && (!prompt || !promptIns || allFiles.length < 5 || allFiles.length > 9 || !profileLink)) {
+      console.log(prompt, promptIns, preview_input, profileLink, preview_output, engine, testing_prompt, gpt_cat)
+
+      return alert('Please fill all fields before moving to next step')
+    }
+    if (currentStep == 4 && type === 'Stable Diffusion' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !sd_model || !sd_sampler || !sd_img_width || !sd_img_height || !sd_cfg_scale || !sd_steps || !sd_neg_prompt || !promptIns || !sd_clip_guide)) {
+      console.log(prompt, sd_model, sd_sampler, sd_img_width, sd_img_height, sd_cfg_scale, sd_steps, sd_neg_prompt, promptIns, sd_clip_guide, promptIns, preview_input, profileLink, preview_output, engine, testing_prompt, gpt_cat)
+
+      return alert('Please fill all fields before moving to next step')
+    }
+    if (currentStep == 4 && type === 'PromptBase' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !promptIns)) {
+      return alert('Please fill all fields before moving to next step')
     }
 
     if (currentStep === steps.length - 1 && direction === 'next') {
       //@ts-ignore
       const userId = currentUser._id;
       if (!userId) alert('user is not logged in');
-
-      console.log(allFiles, 'allfiles');
+      setLoading(true)
       const urls = await addAllFilesToS3(allFiles);
-      console.log(urls, 'ye urls');
 
       const newPrompt = await axios.post(insertPrompt, {
         type,
@@ -140,16 +215,32 @@ const Sell: NextPageWithAuth = () => {
         price,
         name,
         prompt,
-        profileLink,
-        promptIns,
+        midjourney_pflink: profileLink,
+        prompt_ins: promptIns,
         userId,
-        images: urls
+        images: urls,
+        gpt_cat,
+        testing_prompt,
+        engine,
+        preview_output,
+        preview_input,
+        sd_model,
+        sd_sampler,
+        sd_img_width,
+        sd_img_height,
+        sd_steps,
+        sd_cfg_scale,
+        sd_seed,
+        sd_clip_guide,
+        sd_neg_prompt,
       });
       console.log(newPrompt);
       //@ts-ignore
       const updatedPrompts = [...unapprovedPrompts, newPrompt.data]
       //@ts-ignore
-      setUnapprovedPrompts(updatedPrompts)
+      setUnapprovedPrompts(updatedPrompts);
+      setLoading(false)
+
     }
 
     let newStep = currentStep;
@@ -158,7 +249,7 @@ const Sell: NextPageWithAuth = () => {
 
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
   };
-
+  if (loading) return <div className='text-3xl m-auto'>Loading...</div>
   return (
     <div className="grow flex flex-col justify-center items-center py-14 px-20">
       <StepAction className="w-2/3" current={currentStep} total={steps.length} />

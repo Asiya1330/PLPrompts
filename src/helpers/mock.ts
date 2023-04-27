@@ -13,11 +13,11 @@ export const FilterSections: IFilterSection = {
     tagImg: '/tags/prompts.png',
     tagTitle: 'Prompts',
     filterLists: {
-      dalle: 'DALLE',
+      all: 'All',
+      dalle: 'DALL-E',
       midjourney: 'Midjourney',
-      gpt3: 'GPT-3',
-      chatGPT: 'ChatGPT',
-      prompts: 'Prompts',
+      gpt3: 'GPT',
+      prompts: 'PromptBase',
       stableDiffusion: 'Stable Diffusion',
     },
   },
@@ -25,6 +25,7 @@ export const FilterSections: IFilterSection = {
     tagImg: '/tags/categories.png',
     tagTitle: 'Categories',
     filterLists: {
+      all:'All',
       threeD: '3D',
       accessory: 'Accessory',
       animal: 'Animal',

@@ -3,11 +3,12 @@ import { io } from "socket.io-client";
 import React, { useState, useRef, useEffect, RefObject, useContext } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import axios from 'axios';
-import { addChatUrl, allUsersRoute, getChatUrl, host } from '../../utils/apis'
+import { host } from '../../utils/apis'
 import Contacts from '@/components/Contacts';
 import Welcome from '@/components/Welcome';
 import ChatContainer from '@/components/ChatContainer';
-import { ChatContactsContext } from '@/contexts/chatContacts';
+import { ChatContactsContext } from '@/contexts/chatContactsContext';
+import UserInfoContainer from '@/components/UserInfoContainer';
 
 const Chat: NextPage = () => {
   const socket = useRef();
@@ -55,7 +56,10 @@ const Chat: NextPage = () => {
       {currentChat === undefined ? (
         <Welcome />
       ) : (
-        <ChatContainer currentChat={currentChat} socket={socket} />
+        <>
+          <ChatContainer currentChat={currentChat} socket={socket} />
+          <UserInfoContainer  currentChat={currentChat} ></UserInfoContainer>
+        </>
       )}
     </div>
   );

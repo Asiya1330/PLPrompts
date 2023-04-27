@@ -27,12 +27,14 @@ export default function CustomSwiper({ title, type = 'prompt', data }: CustomSwi
 
       {type === 'prompt' &&
         (data as Prompt[]).map(({ name, title, price, tag, images, rating, type }, index) => (
+          
           <SwiperSlide key={index} className="flex items-center justify-center">
             <PromptCard name={name} title={title} price={price} tag={type} image={images?.length ? images[0] : ''} rating={rating} />
           </SwiperSlide>
         ))}
 
       {type === 'engineer' &&
+
         (data as IPromptEngineer[]).map(({ engineerId, avatar, tag, image, viewer }) => (
           <SwiperSlide key={engineerId}>
             <PromptEngineer engineerId={engineerId} avatar={avatar} tag={tag} image={image} viewer={viewer} />
