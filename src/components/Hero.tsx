@@ -16,7 +16,7 @@ export default function Hero() {
   const { currentUser } = useContext(UserContext)
   const { setContacts } = useContext(ChatContactsContext)
   const router = useRouter();
-  
+
   useEffect(() => {
     if (prompts) {
       const hightsMid = prompts.reduce((acc, prompt) => {
@@ -50,12 +50,14 @@ export default function Hero() {
     <div className="w-full flex flex-row justify-center items-center">
       <div className="flex flex-col gap-y-32">
         <PromptCard
+          price={fourHighestScoredPrompt?.['GPT']?.price}
           key={fourHighestScoredPrompt?.['GPT']?.name}
           name={fourHighestScoredPrompt?.['GPT']?.name}
           tag={fourHighestScoredPrompt?.['GPT']?.type}
           image={fourHighestScoredPrompt?.['GPT']?.images?.length ? fourHighestScoredPrompt['GPT']?.images[0] : ''}
         />
         <PromptCard
+          price={fourHighestScoredPrompt?.['Midjourney']?.price}
           key={fourHighestScoredPrompt?.['Midjourney']?.name}
           name={fourHighestScoredPrompt?.['Midjourney']?.name}
           tag={fourHighestScoredPrompt?.['Midjourney']?.type}
@@ -66,8 +68,8 @@ export default function Hero() {
       <div className="flex flex-col justify-center items-center">
         <h2 className="py-10 gradient-text">Expert prompts marketplace</h2>
         <div className="flex flex-col bg-white rounded-lg px-3 py-4 max-w-[270px] h-fit justify-center items-center mt-4">
-          <Image src={fourHighestScoredPrompt?.['PromptBase']?.images[0] ? fourHighestScoredPrompt?.['PromptBase']?.images[0] : '/hire/avatar-diffusion2 - Copy.png'} width="220" height="215" alt="freePrompt" />
-          <p className="text-black text-2xl font-bold text-center pt-4">{fourHighestScoredPrompt?.['PromptBase'].name}</p>
+          <img src={fourHighestScoredPrompt?.['PromptBase']?.images[0] ? fourHighestScoredPrompt?.['PromptBase']?.images[0] : '/hire/avatar-diffusion2 - Copy.png'} width="220" height="215" alt="freePrompt" />
+          <p className="text-black text-2xl font-bold text-center pt-4">{fourHighestScoredPrompt?.['PromptBase']?.name}</p>
           <h2 className="text-black font-bold my-4">$0.00</h2>
           {/* <Link href={{ pathname: '/payment', query: { amount: '0', promptId: fourHighestScoredPrompt?.['PromptBase']?._id } }}> */}
           <button onClick={handleSendToSeller} className='getPrompt bg-[#F3848A] my-6 py-3 px-12 rouned-full text-black
@@ -98,6 +100,7 @@ export default function Hero() {
       </div>
       <div className="flex flex-col gap-y-32">
         <PromptCard
+          price={fourHighestScoredPrompt?.['DALL-E']?.price}
           key={fourHighestScoredPrompt?.['DALL-E']?.name}
           name={fourHighestScoredPrompt?.['DALL-E']?.name}
           tag={fourHighestScoredPrompt?.['DALL-E']?.type}
@@ -105,6 +108,7 @@ export default function Hero() {
         />
         <div className="ml-10">
           <PromptCard
+            price={fourHighestScoredPrompt?.['Stable Diffusion']?.price}
             key={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
             name={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
             tag={fourHighestScoredPrompt?.['Stable Diffusion']?.type}

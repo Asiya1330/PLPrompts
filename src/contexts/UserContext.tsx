@@ -1,5 +1,8 @@
 // //@ts-nocheck
+import { getUserById, updateUserStatusUrl } from '@/utils/apis';
+import axios from 'axios';
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/router';
 import { createContext, useState, useEffect } from "react";
 
 
@@ -26,6 +29,7 @@ export default function UserProvider({ children }: any) {
     // const [currentUser, setCurrentUser] = useState(UserContext);
     const [currentUser, setCurrentUser] = useState<UserContextType | null>();
     const { data: session } = useSession();
+    const router = useRouter()
     console.log(session);
 
     useEffect(() => {
@@ -56,6 +60,30 @@ export default function UserProvider({ children }: any) {
         }
         getUserFromSession();
     }, [session]);
+
+    
+  useEffect(() => {
+    if (router?.query && router?.query?.token) {
+      setCurrentUser(null)
+      const checkUser = async () => {
+        const { data } = await axios.get(`${getUserById}/${router.query.token}`);
+        console.log(data.status);
+
+        if (data && data?.status === 'verified') alert("You are already verified");
+        else if (data) {
+          const updateUserStatus = await axios.post(updateUserStatusUrl, {
+            _id: router.query.token
+          })
+          if (updateUserStatus.data.modifiedCount) {
+            alert("Congratulations! You have been verified.")
+            router.push("/login")
+          }
+        }
+      }
+      checkUser();
+    }
+
+  }, [router.query])
 
     const value = { currentUser, setCurrentUser }
 

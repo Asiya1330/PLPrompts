@@ -2,6 +2,8 @@
 import { useContext, useState } from "react";
 import UploadFiles from '../UploadFiles'
 import { UserContext } from "@/contexts/UserContext";
+
+
 const PromptFile = ({
   type,
   prompt,
@@ -77,8 +79,9 @@ const PromptFile = ({
               value={gpt_cat}
               onChange={(e) => {
                 console.log('eee');
-                
-                setgpt_cat(e.target.value)}}
+
+                setgpt_cat(e.target.value)
+              }}
             >
               <option value={'Completion (RegularGPT)'}>Completion (RegularGPT)</option>
               <option value={'Chat (ChatGPT)'}>Chat (ChatGPT)</option>
@@ -450,6 +453,7 @@ const PromptFile = ({
                 value={sd_img_width}
                 onChange={(e) => setsd_img_width(e.target.value)}
                 className="w-[400px]" type="range" id="vol" name="vol" min="512" max="1024" step="64" />
+              <div className="value">{sd_img_width}</div>
 
             </div>
             <div className="flex flex-row gap-3">
@@ -460,6 +464,8 @@ const PromptFile = ({
                 value={sd_img_height}
                 onChange={(e) => setsd_img_height(e.target.value)}
                 className="w-[400px]" type="range" id="vol" name="vol" min="512" max="1024" step="64" />
+              <div className="value">{sd_img_height}</div>
+
             </div>
 
             <div className="flex flex-row gap-3">
@@ -470,6 +476,8 @@ const PromptFile = ({
                 value={sd_cfg_scale}
                 onChange={(e) => setsd_cfg_scale(e.target.value)}
                 className="w-[400px]" type="range" id="vol" name="vol" min="0.0" max="20.0" step="0.5" />
+              <div className="value">{sd_cfg_scale}</div>
+
             </div>
 
             <div className="flex flex-row gap-3">
@@ -479,6 +487,8 @@ const PromptFile = ({
               <input value={sd_steps}
                 onChange={(e) => setsd_steps(e.target.value)}
                 className="w-[400px]" type="range" id="vol" name="vol" min="10" max="150" step="1" />
+              <div className="value">{sd_steps}</div>
+
             </div>
 
             <div className="w-full flex flex-col gap-y-2">

@@ -41,7 +41,8 @@ const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
           email,
           password,
         });
-
+        console.log(data,'status of logged in user');
+        
         if (!data.status) throw new Error(data.msg);
         setCurrentUser(data.user);
         if (process.env.NEXT_PUBLIC_LOCALHOST_KEY)
@@ -70,14 +71,8 @@ const LoginForm = ({ onChildData, onSuccess }: LoginFormProps) => {
           password,
         });
         if (!data.status) throw data.msg;
-
+        alert('We have sent you email, Please verify yourself')
         setIsLogin(true);
-        if (process.env.NEXT_PUBLIC_LOCALHOST_KEY)
-          localStorage.setItem(
-            process.env.NEXT_PUBLIC_LOCALHOST_KEY,
-            JSON.stringify(data.user)
-          );
-        setCurrentUser(data.user);
       }
     } catch (e) {
       console.log('SOME ERROR HAPPENED', e);

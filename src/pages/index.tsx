@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head';
 import Image from 'next/image';
@@ -9,6 +10,9 @@ import CustomSwiper from '@/components/CustomSwiper';
 import Hero from '@/components/Hero';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import Link from 'next/link';
+// import axios from 'axios';
+// import { getUserById, updateUserStatusUrl } from '@/utils/apis';
+// import { UserContext } from '@/contexts/UserContext';
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +21,7 @@ export default function Home() {
   const [gpt3Prompts, setGPT3Prompts] = useState([]);
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
+  // const { setCurrentUser } = useContext(UserContext)
 
   const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
 
@@ -118,7 +123,6 @@ export default function Home() {
             Browse Marketplace
           </Link>
         </div>
-        <CustomSwiper title="Most Popular Prompts This Month" data={monthlySortedPrompts} />
 
         <div className="blog">
           <Image src="/blogs/youtube.png" alt="youtube" width="555" height="330" />

@@ -136,8 +136,6 @@ const Sell: NextPageWithAuth = () => {
 
   useEffect(() => {
     if (type && type !== 'GPT') {
-      console.log('xs');
-
       setgpt_cat(null)
       setengine(null)
     }

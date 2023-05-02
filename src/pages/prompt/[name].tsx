@@ -15,7 +15,7 @@ export default function SinglePrompt() {
     const [promptUser, setPromptUser] = useState();
     // const [isFeature, setIsFeature] = useState();
     const router = useRouter();
-    const { prompts, setPrompts } = useContext(PromptsContext);
+    const { prompts, setPrompts, setFeaturedPrompts, featuredPrompts } = useContext(PromptsContext);
     const [isClicked, setIsClicked] = useState(false);
     const heartImageRef = useRef()
 
@@ -81,7 +81,8 @@ export default function SinglePrompt() {
                 const updatedPrompt = { ...prompt, isFeature: true }
                 const updatedPrompts = prompts.map(item => (item._id === prompt._id) ? { ...item, isFeature: true } : item);
                 setPrompt(updatedPrompt);
-                setPrompts(updatedPrompts)
+                setPrompts(updatedPrompts);
+                setFeaturedPrompts([...featuredPrompts, updatedPrompt])
             }
         }
 
@@ -89,13 +90,13 @@ export default function SinglePrompt() {
     const handleOwnerProfile = () => {
         console.log(promptUser);
         if (promptUser && promptUser?.username)
-        router.push({
-            pathname: `/public-profile/${promptUser.username}`,
-            query: { publicProfileOwner: JSON.stringify(promptUser) }
-        }, `/public-profile/${promptUser.username}`);
+            router.push({
+                pathname: `/public-profile/${promptUser.username}`,
+                query: { publicProfileOwner: JSON.stringify(promptUser) }
+            }, `/public-profile/${promptUser.username}`);
     }
 
-    if(!promptUser) return <div>Loading...</div>
+    if (!promptUser) return <div>Loading...</div>
     else return (
         <div className='m-10 gap-1 flex flex-row'>
             {(!prompt) ? 'Loading...'
