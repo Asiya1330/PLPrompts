@@ -4,9 +4,15 @@ export const registerRoute = `${host}/api/auth/register`;
 export const logoutRoute = `${host}/api/auth/logout`;
 export const allUsersRoute = `${host}/api/auth/allusers`;
 
+export const connectBankAccUrl = `${host}/api/payment/connect`
+export const stripeSellerAccIdUrl = `${host}/api/payment/connect/oauth/callback`;
+export const PaymentLink = `${host}/api/payment/payment-link`
+
 export const getLikesViewsPurchasesAndRank = `${host}/api/user/getlikesviewspurchasesandrank`;
 export const addFollowerUrl = `${host}/api/user/addfollower`;
 export const updateUserStatusUrl = `${host}/api/user/updateuserstatus`;
+
+export const updateUser = `${host}/api/user/update`
 
 export const sendMessageRoute = `${host}/api/messages/addmsg`;
 export const recieveMessageRoute = `${host}/api/messages/getmsg`;
@@ -34,3 +40,4 @@ export const GetPromptFavByUserId = `${host}/api/prompt/likeprompt`;
 export const InsertPurchasePromptUrl = `${host}/api/prompt/purchaseprompt`;
 export const GetPromptPurchaseByUserId = `${host}/api/prompt/purchaseprompt`;
 
+export const updatePrompt = `${host}/api/prompt/update`

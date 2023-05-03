@@ -3,7 +3,7 @@ import { Router, useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
-import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, getUserById, markFeatureUrl } from '@/utils/apis';
+import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
 import axios from 'axios';
 import Link from 'next/link';
 import { isAdmin } from '@/lib/auth';
@@ -96,6 +96,14 @@ export default function SinglePrompt() {
             }, `/public-profile/${promptUser.username}`);
     }
 
+    const handlePayment = async () => {
+        const { data } = await axios.post(PaymentLink, prompt)
+        console.log('====================================');
+        console.log(data.url);
+        router.push(data.url)
+        console.log('====================================');
+    }
+
     if (!promptUser) return <div>Loading...</div>
     else return (
         <div className='m-10 gap-1 flex flex-row'>
@@ -152,11 +160,13 @@ export default function SinglePrompt() {
                         <div className="price mb-5">
                             <span className='text-3xl'>{prompt.price}</span>
                         </div>
-                        <Link href={{ pathname: '/payment', query: { amount: prompt.price, promptId: prompt._id } }}>
-                            <button className='getPrompt'>
+                        {/* <Link href={{ pathname: '/payment', query: { amount: prompt.price, promptId: prompt._id } }}> */}
+                        <button
+                            onClick={handlePayment}
+                            className='getPrompt'>
                                 Get Prompt
                             </button>
-                        </Link>
+                        {/* </Link> */}
                         <p className='flex justify-start mt-3'>{prompt.createdAt}</p>
 
                     </div>

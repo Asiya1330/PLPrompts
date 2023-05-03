@@ -19,16 +19,20 @@ const StepperControl = ({
         className="bg-yellow py-3 px-12 rouned-full text-black
             font-semibold border-2 hover:bg-slate-700 transition duration-200 ease-in-out"
       >
-        {currentStep === steps.length - 1 ? "Confirm Add Prompt" : "Next"}
+        {currentStep === steps.length - 2 ? "Confirm Add Prompt" : ((currentStep === steps.length - 1) ? 'Connect Bank' : 'Next')}
+
       </button>
-      <button
-        onClick={() => handleClick()}
-        className={`py-3 px-12 rouned-full bg-transparent text-white
-            font-semibold border-2 hover:bg-slate-700 transition duration-200 ease-in-out ${currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-      >
-        Back
-      </button>
+      {
+        (currentStep !== steps.length - 1) &&
+        <button
+          onClick={() => handleClick()}
+          className={`py-3 px-12 rouned-full bg-transparent text-white
+              font-semibold border-2 hover:bg-slate-700 transition duration-200 ease-in-out ${currentStep === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+        >
+          Back
+        </button>
+      }
     </div>
   );
 };

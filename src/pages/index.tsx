@@ -10,9 +10,9 @@ import CustomSwiper from '@/components/CustomSwiper';
 import Hero from '@/components/Hero';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import Link from 'next/link';
-// import axios from 'axios';
-// import { getUserById, updateUserStatusUrl } from '@/utils/apis';
-// import { UserContext } from '@/contexts/UserContext';
+import axios from 'axios';
+import { stripeSellerAccIdUrl, updateUser } from '@/utils/apis';
+import { UserContext } from '@/contexts/UserContext';
 
 export default function Home() {
   const router = useRouter();
@@ -21,9 +21,31 @@ export default function Home() {
   const [gpt3Prompts, setGPT3Prompts] = useState([]);
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
-  // const { setCurrentUser } = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
 
   const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
+
+  useEffect(() => {
+    const getId = async () => {
+      console.log(router.query.code, 'olololol');
+      if (router?.query?.code) {
+        const { data } = await axios.get(stripeSellerAccIdUrl, { params: { code: router.query.code } })
+        console.log(data.stripe_user_id);
+        if (currentUser && currentUser._id && data.stripe_user_id) {
+          const response = await axios.put(updateUser, {
+            _id: currentUser._id,
+            ownerStripeId: data.stripe_user_id
+          })
+          console.log('====================================');
+          console.log(response);
+          console.log('====================================');
+        }
+        router.push('/')
+      }
+    }
+    getId()
+
+  }, [router.query])
 
   useEffect(() => {
     const midhur = newestPrompts.filter((prompt) => prompt.type === 'Midjourney')

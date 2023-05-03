@@ -68,10 +68,6 @@ export default function GetPaid() {
           <option>United States</option>
         </select>
       </div>
-      {/* <div className="flex items-center gap-x-5">
-        <button className="px-12 py-3 bg-yellow text-black border-2">Next</button>
-        <button className="px-12 py-3 bg-transparent text-white border-2">Back</button>
-      </div> */}
     </div>
   );
 }

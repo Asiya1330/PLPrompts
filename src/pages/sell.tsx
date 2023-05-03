@@ -12,9 +12,12 @@ import { NextPageWithAuth } from '@/helpers/interface';
 import { UserContext } from '@/contexts/UserContext';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import axios from 'axios';
-import { insertPrompt, uploadImageByUserIdAndFile } from '@/utils/apis';
+import { connectBankAccUrl, insertPrompt, uploadImageByUserIdAndFile } from '@/utils/apis';
+import { useRouter } from 'next/router';
 
 const Sell: NextPageWithAuth = () => {
+  const router = useRouter();
+
   const { currentUser } = useContext(UserContext)
   const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext)
   const [currentStep, setCurrentStep] = useState(1);
@@ -55,6 +58,7 @@ const Sell: NextPageWithAuth = () => {
   //
 
   const [loading, setLoading] = useState(false)
+  const [stripeAddBackUrl, setStripeAddBackUrl] = useState();
 
   const displayStep = (step: number) => {
     switch (step) {
@@ -117,10 +121,12 @@ const Sell: NextPageWithAuth = () => {
       case 5:
         return <GetPaid />;
       case 6:
-        return <Final handleClick={handleClick} />;
+        return <Final />;
     }
   };
-
+  console.log('====================================');
+  console.log(currentStep, 'steps');
+  console.log('====================================');
   useEffect(() => {
     const getSession = () => {
 
@@ -200,7 +206,7 @@ const Sell: NextPageWithAuth = () => {
       return alert('Please fill all fields before moving to next step')
     }
 
-    if (currentStep === steps.length - 1 && direction === 'next') {
+    if (currentStep === steps.length - 2 && direction === 'next') {
       //@ts-ignore
       const userId = currentUser._id;
       if (!userId) alert('user is not logged in');
@@ -241,12 +247,17 @@ const Sell: NextPageWithAuth = () => {
 
     }
 
+    if (currentStep === steps.length - 1 && direction === 'next') {
+      router.push('https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=ca_Np5eJVYRAZOWv2uEs9oHCwV0Ls2ySQba')
+     }
+
     let newStep = currentStep;
     setDirection(direction);
     direction === 'next' ? newStep++ : newStep--;
 
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
   };
+
   if (loading) return <div className='text-3xl m-auto'>Loading...</div>
   return (
     <div className="grow flex flex-col justify-center items-center py-14 px-20">
