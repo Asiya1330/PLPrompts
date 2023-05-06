@@ -55,8 +55,6 @@ const Sell: NextPageWithAuth = () => {
   const [sd_clip_guide, setsd_clip_guide] = useState(false);
   const [sd_neg_prompt, setsd_neg_prompt] = useState(null);
 
-  //
-
   const [loading, setLoading] = useState(false)
   const [stripeAddBackUrl, setStripeAddBackUrl] = useState();
 
@@ -124,9 +122,7 @@ const Sell: NextPageWithAuth = () => {
         return <Final />;
     }
   };
-  console.log('====================================');
-  console.log(currentStep, 'steps');
-  console.log('====================================');
+
   useEffect(() => {
     const getSession = () => {
 
@@ -211,6 +207,7 @@ const Sell: NextPageWithAuth = () => {
       const userId = currentUser._id;
       if (!userId) alert('user is not logged in');
       setLoading(true)
+
       const urls = await addAllFilesToS3(allFiles);
 
       const newPrompt = await axios.post(insertPrompt, {
@@ -248,8 +245,10 @@ const Sell: NextPageWithAuth = () => {
     }
 
     if (currentStep === steps.length - 1 && direction === 'next') {
-      router.push('https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=ca_Np5eJVYRAZOWv2uEs9oHCwV0Ls2ySQba')
-     }
+
+      if (!(currentUser?.ownerStripeId))
+        router.push('https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=ca_Np5eJVYRAZOWv2uEs9oHCwV0Ls2ySQba')
+    }
 
     let newStep = currentStep;
     setDirection(direction);

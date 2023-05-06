@@ -3,15 +3,14 @@ import { Router, useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
-import { GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
+import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
 import axios from 'axios';
-import Link from 'next/link';
 import { isAdmin } from '@/lib/auth';
 
 export default function SinglePrompt() {
 
     const [prompt, setPrompt] = useState();
-    const { currentUser } = useContext(UserContext);
+    const { currentUser, setCurrentUser } = useContext(UserContext);
     const [promptUser, setPromptUser] = useState();
     // const [isFeature, setIsFeature] = useState();
     const router = useRouter();
@@ -58,7 +57,7 @@ export default function SinglePrompt() {
     const handleMarkFav = async () => {
         if (!isClicked) {
             setIsClicked(true);
-            if (currentUser._id && prompt && prompt._id) {
+            if (currentUser?._id && prompt && prompt._id) {
                 heartImageRef.current.style.borderRadius = '50%';
                 heartImageRef.current.style.background = 'red';
 
@@ -97,11 +96,29 @@ export default function SinglePrompt() {
     }
 
     const handlePayment = async () => {
-        const { data } = await axios.post(PaymentLink, prompt)
-        console.log('====================================');
-        console.log(data.url);
-        router.push(data.url)
-        console.log('====================================');
+        // if (prompt && !prompt?.payment_link) return alert('no payment link attached to this product')
+        if (currentUser?._id && currentUser?._id !== promptUser?._id) {
+            const { data } = await axios.post(CreateCheckoutSessionUrl, {
+                userId: currentUser._id,
+                userEmail: currentUser.email,
+                userName: currentUser.username,
+                stripeCustomerId: currentUser?.stripeCustomerId || null,
+                promptProduct: prompt
+            })
+            if (data.stripeCustomerId) {
+                setCurrentUser({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
+                console.log({ ...currentUser, stripeCustomerId: data.stripeCustomerId });
+                localStorage.setItem(
+                    process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+                    JSON.stringify({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
+                );
+            }
+            if (data?.url)
+                router.push(data.url)
+
+            console.log(data.url);
+            // router.push(prompt?.payment_link)
+        }
     }
 
     if (!promptUser) return <div>Loading...</div>
@@ -120,7 +137,7 @@ export default function SinglePrompt() {
                                 {prompt.name} <span className='text-xl text-gray-500 cursor-pointer' title='edit title'></span>
                             </p>
                             {
-                                (currentUser._id === prompt.userId) &&
+                                (currentUser?._id && (currentUser?._id === prompt?.userId)) &&
                                 <button>Edit prompt &#x270E;</button>
                             }
                             {
@@ -161,11 +178,16 @@ export default function SinglePrompt() {
                             <span className='text-3xl'>{prompt.price}</span>
                         </div>
                         {/* <Link href={{ pathname: '/payment', query: { amount: prompt.price, promptId: prompt._id } }}> */}
-                        <button
-                            onClick={handlePayment}
-                            className='getPrompt'>
+                        {currentUser?._id && (currentUser?._id !== promptUser?._id)
+                            && <button
+                                onClick={handlePayment}
+                                className='getPrompt'>
                                 Get Prompt
                             </button>
+                        }
+                        {
+                            (!currentUser?._id) && <div>Please login to purchase</div>
+                        }
                         {/* </Link> */}
                         <p className='flex justify-start mt-3'>{prompt.createdAt}</p>
 

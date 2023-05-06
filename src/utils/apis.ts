@@ -7,6 +7,7 @@ export const allUsersRoute = `${host}/api/auth/allusers`;
 export const connectBankAccUrl = `${host}/api/payment/connect`
 export const stripeSellerAccIdUrl = `${host}/api/payment/connect/oauth/callback`;
 export const PaymentLink = `${host}/api/payment/payment-link`
+export const CreateCheckoutSessionUrl = `${host}/api/payment/create-checkout-session`
 
 export const getLikesViewsPurchasesAndRank = `${host}/api/user/getlikesviewspurchasesandrank`;
 export const addFollowerUrl = `${host}/api/user/addfollower`;

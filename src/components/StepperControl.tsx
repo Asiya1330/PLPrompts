@@ -1,4 +1,5 @@
-import React from "react";
+import { UserContext } from "@/contexts/UserContext";
+import React, { useContext } from "react";
 
 interface StepperControlProps {
   handleClick: any;
@@ -10,6 +11,8 @@ const StepperControl = ({
   currentStep,
   steps,
 }: StepperControlProps) => {
+  const { currentUser } = useContext(UserContext)
+  
   return (
     <div
       className={`container flex justify-center gap-3 mb-8`}
@@ -19,7 +22,8 @@ const StepperControl = ({
         className="bg-yellow py-3 px-12 rouned-full text-black
             font-semibold border-2 hover:bg-slate-700 transition duration-200 ease-in-out"
       >
-        {currentStep === steps.length - 2 ? "Confirm Add Prompt" : ((currentStep === steps.length - 1) ? 'Connect Bank' : 'Next')}
+        {currentStep === steps.length - 2 ? "Confirm Add Prompt" :
+          (((currentStep === steps.length - 1)) ? `${!(currentUser?.ownerStripeId) ? 'Connect Bank' : 'Bank Connected'}` : 'Next')}
 
       </button>
       {

@@ -21,7 +21,7 @@ export default function Home() {
   const [gpt3Prompts, setGPT3Prompts] = useState([]);
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
 
@@ -36,9 +36,13 @@ export default function Home() {
             _id: currentUser._id,
             ownerStripeId: data.stripe_user_id
           })
-          console.log('====================================');
-          console.log(response);
-          console.log('====================================');
+          setCurrentUser({ ...currentUser, ownerStripeId: data.stripe_user_id });
+          console.log({ ...currentUser, ownerStripeId: data.stripe_user_id });
+          localStorage.setItem(
+            process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+            JSON.stringify({ ...currentUser, ownerStripeId: data.stripe_user_id })
+          );
+          console.log(response, 'userUpdate');
         }
         router.push('/')
       }
