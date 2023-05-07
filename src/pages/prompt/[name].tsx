@@ -3,7 +3,7 @@ import { Router, useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
-import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
+import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptPurchaseByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
 import axios from 'axios';
 import { isAdmin } from '@/lib/auth';
 
@@ -96,28 +96,33 @@ export default function SinglePrompt() {
     }
 
     const handlePayment = async () => {
-        // if (prompt && !prompt?.payment_link) return alert('no payment link attached to this product')
-        if (currentUser?._id && currentUser?._id !== promptUser?._id) {
-            const { data } = await axios.post(CreateCheckoutSessionUrl, {
-                userId: currentUser._id,
-                userEmail: currentUser.email,
-                userName: currentUser.username,
-                stripeCustomerId: currentUser?.stripeCustomerId || null,
-                promptProduct: prompt
-            })
-            if (data.stripeCustomerId) {
-                setCurrentUser({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
-                console.log({ ...currentUser, stripeCustomerId: data.stripeCustomerId });
-                localStorage.setItem(
-                    process.env.NEXT_PUBLIC_LOCALHOST_KEY,
-                    JSON.stringify({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
-                );
+        if (currentUser && currentUser?._id && prompt && prompt._id) {
+            const { data } = await axios.get(`${GetPromptPurchaseByUserId}/${currentUser._id}/${prompt._id}`)
+            console.log(data, 'dacd');
+            if (data.length) return alert('Prompt already bought by you!')
+           
+            if (currentUser?._id !== promptUser?._id) {
+                const { data } = await axios.post(CreateCheckoutSessionUrl, {
+                    userId: currentUser._id,
+                    userEmail: currentUser.email,
+                    userName: currentUser.username,
+                    stripeCustomerId: currentUser?.stripeCustomerId || null,
+                    promptProduct: prompt
+                })
+                if (data.stripeCustomerId) {
+                    setCurrentUser({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
+                    console.log({ ...currentUser, stripeCustomerId: data.stripeCustomerId });
+                    localStorage.setItem(
+                        process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+                        JSON.stringify({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
+                    );
+                }
+                if (data?.url) {
+                    router.push(data.url)
+                    console.log(data.url);
+                }
+                // router.push(prompt?.payment_link)
             }
-            if (data?.url)
-                router.push(data.url)
-
-            console.log(data.url);
-            // router.push(prompt?.payment_link)
         }
     }
 
