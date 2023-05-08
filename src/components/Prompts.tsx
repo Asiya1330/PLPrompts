@@ -15,7 +15,7 @@ export default function Prompts() {
         if (!currentUser || !currentUser.email) router.push('/login');
         console.log(currentUser,'in prompts');
         
-        if (prompts) {
+        if (prompts && currentUser?._id) {
         //@ts-ignore
             const getMyPrompts = prompts.filter((prompt) => prompt.userId === currentUser._id);
             setMyPrompts(getMyPrompts)

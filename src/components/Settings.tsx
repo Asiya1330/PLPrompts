@@ -1,16 +1,15 @@
 import { UserContext } from '@/contexts/UserContext'
 import React, { useContext, useState } from 'react';
-import userHelperFuncs from '../supabase/User'
 import { useRouter } from 'next/router';
+import { signOut } from 'next-auth/react'
 
 export default function Settings() {
     const { currentUser, setCurrentUser } = useContext(UserContext);
-    console.log(currentUser, 'settings');
     const [username, setUsername] = useState();
     const route = useRouter();
 
     const handleSignOut = async () => {
-        await userHelperFuncs.userSignOut();
+        await signOut()
         setCurrentUser(null)
         localStorage.setItem(
             //@ts-ignore
@@ -50,6 +49,6 @@ export default function Settings() {
                 </div>
                 <button className="btn logout-btn active:bg-gray-200 active:text-black" onClick={handleSignOut}>Logout</button>
             </div>
-        </div >
+        </div>
     )
 }

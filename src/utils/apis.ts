@@ -13,12 +13,14 @@ export const getLikesViewsPurchasesAndRank = `${host}/api/user/getlikesviewspurc
 export const addFollowerUrl = `${host}/api/user/addfollower`;
 export const updateUserStatusUrl = `${host}/api/user/updateuserstatus`;
 
+export const FetchUserByEmail = `${host}/api/user/fetch-user-by-email`
 export const updateUser = `${host}/api/user/update`
 
 export const sendMessageRoute = `${host}/api/messages/addmsg`;
 export const recieveMessageRoute = `${host}/api/messages/getmsg`;
 export const addChatUrl = `${host}/api/messages/addchat`;
 export const getChatUrl = `${host}/api/messages/getchat`;
+export const SendEmailToChatUrl = `${host}/api/messages/send-email-to-chat`
 
 export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const insertPrompt = `${host}/api/prompt/addprompt`

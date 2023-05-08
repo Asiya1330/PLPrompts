@@ -22,15 +22,17 @@ export default NextAuth({
             }
             return session;
         },
-        async signIn({ user, account, profile, email, credentials }) {
+        signIn({ user, account, profile, email, credentials }) {
             const isAllowedToSignIn = true;
-            await axios.post(registerRoute, {
+            axios.post(registerRoute, {
                 username: user.name,
                 email: user.email,
                 _id: user.id,
-                avatarImage: user.image
+                avatarImage: user.image,
+                status: 'verified'
             })
-
+            console.log('sigcudncd');
+            
             if (isAllowedToSignIn) {
                 return true
             } else {

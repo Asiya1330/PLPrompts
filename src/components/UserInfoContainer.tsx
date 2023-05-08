@@ -32,7 +32,7 @@ const UserInfoContainer = ({ currentChat }: any) => {
             </div>
             <hr />
             <div className="avatar-image  flex justify-center">
-                <img className=' rounded-full border-white border-8 w-[100px] h-[100px] '
+                <img className=' rounded-full border-white border-[8px] w-[100%] h-[100%] '
                     src={currentChat?.avatarImage ? currentChat?.avatarImage : "avatars/avatar2.png"} />
             </div>
             <div className="username text-center">

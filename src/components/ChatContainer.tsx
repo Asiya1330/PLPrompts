@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React, { useState, useEffect, useRef, useContext, ChangeEvent } from "react";
 import axios from "axios";
-import { sendMessageRoute, recieveMessageRoute } from "../utils/apis";
+import { sendMessageRoute, recieveMessageRoute, SendEmailToChatUrl } from "../utils/apis";
 import Picker from 'emoji-picker-react'
 import { UserContext } from "@/contexts/UserContext";
 
@@ -12,6 +12,7 @@ export default function ChatContainer({ currentChat, socket }: any) {
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [msg, setMsg] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
@@ -45,8 +46,13 @@ export default function ChatContainer({ currentChat, socket }: any) {
     }, [currentChat]);
 
     const handleSendMsg = async (msg: any) => {
+        setLoading(true)
         let data = currentUser;
-        console.log(currentUser, 'cindkj');
+        await axios.post(SendEmailToChatUrl, {
+            chat: currentChat,
+            sender: currentUser,
+            message: msg
+        })
         socket.current.emit("send-msg", {
             to: currentChat._id,
             from: data._id,
@@ -63,6 +69,7 @@ export default function ChatContainer({ currentChat, socket }: any) {
         const msgs = [...messages];
         msgs.push({ fromSelf: true, message: msg });
         setMessages(msgs);
+        setLoading(false)
     };
 
     useEffect(() => {
@@ -99,28 +106,29 @@ export default function ChatContainer({ currentChat, socket }: any) {
                     </div>
                 </div>
             </div>
-            <div className="chat-messages">
-                {messages.map((message, idx) => {
-                    return (
-                        <div ref={scrollRef} key={idx}>
-                            <div
-                                className={`message ${message.fromSelf ? "sended" : "recieved"
-                                    }`}
-                            >
-                                <div className="avatar">
-                                    <img src="./avatars/avatar1.png" alt="" />
-                                </div>
-                                <div className="content ">
-                                    <p>{message.message}</p>
+            {loading ? <div className="flex flex-row items-end justify-center h-[80%]">Loading...</div> :
+                <div className="chat-messages">
+                    {messages.map((message, idx) => {
+                        return (
+                            <div ref={scrollRef} key={idx}>
+                                <div
+                                    className={`message ${message.fromSelf ? "sended" : "recieved"
+                                        }`}
+                                >
+                                    <div className="avatar">
+                                        <img src="./avatars/avatar1.png" alt="" />
+                                    </div>
+                                    <div className="content ">
+                                        <p>{message.message}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
+            }
             <div className="input-container">
                 <form className="input-form" onSubmit={(event) => sendChat(event)}>
-
                     <input
                         type="text"
                         placeholder="type your message here"

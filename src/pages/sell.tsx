@@ -193,8 +193,8 @@ const Sell: NextPageWithAuth = () => {
 
       return alert('Please fill all fields before moving to next step')
     }
-    if (currentStep == 4 && type === 'Stable Diffusion' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !sd_model || !sd_sampler || !sd_img_width || !sd_img_height || !sd_cfg_scale || !sd_steps || !sd_neg_prompt || !promptIns || !sd_clip_guide)) {
-      console.log(prompt, sd_model, sd_sampler, sd_img_width, sd_img_height, sd_cfg_scale, sd_steps, sd_neg_prompt, promptIns, sd_clip_guide, promptIns, preview_input, profileLink, preview_output, engine, testing_prompt, gpt_cat)
+    if (currentStep == 4 && type === 'Stable Diffusion' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !sd_model || !sd_sampler || !sd_img_width || !sd_img_height || !sd_cfg_scale || !sd_steps || !sd_neg_prompt || !promptIns )) {
+      console.log(prompt, sd_model, sd_sampler, sd_img_width, sd_img_height, sd_cfg_scale, sd_steps, sd_neg_prompt, promptIns, sd_clip_guide, promptIns, profileLink, preview_output, engine, testing_prompt, gpt_cat)
 
       return alert('Please fill all fields before moving to next step')
     }
