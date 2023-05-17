@@ -10,22 +10,14 @@ const PublicProfile = () => {
     const [profileOwner, setProfileOwner] = useState();
     const router = useRouter();
     const { currentUser } = useContext(UserContext);
-    const { contacts, setContacts } = useContext(ChatContactsContext)
+    const { setContacts } = useContext(ChatContactsContext)
     const [mostPopular, setMostPopular] = useState();
     const [newest, setNewest] = useState();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (router.isReady) {
-            const { publicProfileOwner, username } = router.query;
-            console.log(username);
-
-            // if (publicProfileOwner) {
-            //     const promptUser = JSON.parse(publicProfileOwner);
-
-            //     setProfileOwner(promptUser)
-            // }
-            // else{
+            const { username } = router.query;
             const getOwnerMetaData = async () => {
                 const { data } = await axios.get(`${getLikesViewsPurchasesAndRank}?ownername=${username}`)
                 const badgesData = await axios.get(`${getBadgesByUserIDUrl}?ownerId=${data[0]?._id}`);
@@ -39,7 +31,6 @@ const PublicProfile = () => {
             }
             getOwnerMetaData();
         }
-        // }
     }, [router.isReady])
 
     useEffect(() => {
@@ -81,6 +72,7 @@ const PublicProfile = () => {
 
     const handleFollow = async () => {
         setLoading(true)
+        if (!currentUser?._id) return router.push('/login')
         if (profileOwner?._id !== currentUser?._id) {
             const { data } = await axios.post(addFollowerUrl, {
                 userId: profileOwner?._id,
@@ -97,6 +89,7 @@ const PublicProfile = () => {
 
     const handleMessage = async () => {
         setLoading(true)
+        if (!currentUser?._id) return router.push('/login')
         if (profileOwner?._id !== currentUser?._id) {
             const { data } = await axios.post(addChatUrl, {
                 userId: currentUser?._id,
@@ -124,8 +117,12 @@ const PublicProfile = () => {
                     <div className="profile-pic-options flex mt-[-50px] justify-between mr-[20px] ml-[20px]">
                         <img className='w-[100px] h=[100px] rounded-full border-white border-4' src={`${profileOwner?.avatarImage?.length ? profileOwner?.avatarImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'} `} alt="" />
                         <div className="options">
-                            <button onClick={handleMessage}>Message <span></span></button>
-                            <button onClick={handleFollow}>Follow <span></span></button>
+                            {
+                                (profileOwner?._id !== currentUser?._id) && <>
+                                    <button onClick={handleMessage}>Message <span></span></button>
+                                    <button onClick={handleFollow}>Follow <span></span></button>
+                                </>
+                            }
 
                         </div>
                     </div>

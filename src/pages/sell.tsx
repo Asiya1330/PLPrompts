@@ -247,7 +247,8 @@ const Sell: NextPageWithAuth = () => {
     if (currentStep === steps.length - 1 && direction === 'next') {
 
       if (!(currentUser?.ownerStripeId))
-        router.push('https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=ca_Np5eJVYRAZOWv2uEs9oHCwV0Ls2ySQba')
+        if (process.env.NEXT_PUBLIC_EXPRESS_ACCOUNT_LINK) router.push(process.env.NEXT_PUBLIC_EXPRESS_ACCOUNT_LINK)
+        else alert('Express connect link not found');
     }
 
     let newStep = currentStep;

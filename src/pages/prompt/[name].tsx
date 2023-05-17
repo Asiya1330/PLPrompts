@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Router, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
@@ -57,6 +57,7 @@ export default function SinglePrompt() {
     const handleMarkFav = async () => {
         if (!isClicked) {
             setIsClicked(true);
+            if (!currentUser?._id) alert("You have to login to mark favourite!")
             if (currentUser?._id && prompt && prompt._id) {
                 heartImageRef.current.style.borderRadius = '50%';
                 heartImageRef.current.style.background = 'red';
@@ -102,13 +103,17 @@ export default function SinglePrompt() {
             if (data.length) return alert('Prompt already bought by you!')
            
             if (currentUser?._id !== promptUser?._id) {
-                const { data } = await axios.post(CreateCheckoutSessionUrl, {
+                const response = await axios.post(CreateCheckoutSessionUrl, {
                     userId: currentUser._id,
                     userEmail: currentUser.email,
                     userName: currentUser.username,
                     stripeCustomerId: currentUser?.stripeCustomerId || null,
                     promptProduct: prompt
                 })
+                console.log(response, ';lololo');
+
+                if (response.data.msg) return alert(response.data.msg)
+                const { data } = response;
                 if (data.stripeCustomerId) {
                     setCurrentUser({ ...currentUser, stripeCustomerId: data.stripeCustomerId })
                     console.log({ ...currentUser, stripeCustomerId: data.stripeCustomerId });
@@ -121,7 +126,6 @@ export default function SinglePrompt() {
                     router.push(data.url)
                     console.log(data.url);
                 }
-                // router.push(prompt?.payment_link)
             }
         }
     }

@@ -10,7 +10,6 @@ import PromptCardExt from '@/components/PromptCardExt';
 const Approval = () => {
     const { currentUser } = useContext(UserContext);
     const { unapprovedPrompts, setUnapprovedPrompts } = useContext(PromptsContext);
-    // const [releaseHour, setReleaseHour] = useState();
 
     const handleApprovePrompt = async (id: any, timeInHour: any, selectedCategories: any) => {
         const { data } = await axios.post(approvePromptUrl, { id, timeInHour, selectedCategories });
