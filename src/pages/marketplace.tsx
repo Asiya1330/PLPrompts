@@ -7,17 +7,17 @@ import clsx from 'classnames';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import axios from 'axios';
 import { getAllPrompts, getAllPromptsByHourlyFactor } from '@/utils/apis';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 export default function Marketplace() {
+  const { showBurgerMenu } = useContext(ResposnsivenessContext)
   const [currentPage, setCurrentPage] = useState(1);
   const [sortByCaption, setSortByCaption] = useState('Trending');
 
   const [categoryKey, setCategoryKey] = useState('All');
   const [promptKey, setPromptKey] = useState('All');
   const [filteredPrompts, setFilteredPrompts] = useState();
-  const [sortByKey, setSortByKey] = useState('Trending');
   const [loading, setLoading] = useState()
-
 
   const [filterList, setFilterList] = useState<{
     [section: string]: { [key: string]: boolean };
@@ -94,7 +94,7 @@ export default function Marketplace() {
   return (
     <>
       <div className="flex">
-        <div id="filterSection" className="w-[275px] shrink-0 border-r-[0.5px] border-[#FFFFFF66]">
+        <div id="filterSection" className={`${showBurgerMenu ? 'w-[150px]':' w-[275px]'} shrink-0 border-r-[0.5px] border-[#FFFFFF66]`}>
           <div className="flex flex-col">
             {Object.entries(FilterSections).map(([section, { tagImg, tagTitle, filterLists }], index) => (
               <>
@@ -113,8 +113,8 @@ export default function Marketplace() {
         {(loading) ? <div className='mr-auto ml-auto text-xl mt-10'>Loading...</div> :
 
 
-          <div id="trendingPrompts" className="flex flex-col pt-8 px-8 w-full mx-auto">
-            <h3 className="pb-8">{sortByCaption === 'Trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
+          <div id="trendingPrompts" className={`${showBurgerMenu ? 'p-4' : 'pt-8 px-8'} flex flex-col  w-full mx-auto`}>
+            <h3 className={`${showBurgerMenu ? 'text-xl' : ''} pb-8`}>{sortByCaption === 'Trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
             <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
 
               { //@ts-ignore
@@ -129,7 +129,7 @@ export default function Marketplace() {
                 </div>
               )}
 
-            <div className=" flex gap-x-2 pb-14 ml-auto">
+            <div className=" flex gap-x-2 pb-14 ml-auto flex-wrap">
               <button className="slider-button" onClick={() => handleClick('back')}>
                 <Icon>left</Icon>
               </button>

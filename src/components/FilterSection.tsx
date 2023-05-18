@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Icon from '@/components/Icon';
 import clsx from 'classnames';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
+import { useContext } from 'react';
 
 interface FilterSectionProps {
   tagImg: string;
@@ -11,7 +13,7 @@ interface FilterSectionProps {
 }
 
 const FilterSection = ({ tagImg, tag, filterLists, filter, onChange }: FilterSectionProps) => {
-
+  const { showBurgerMenu } = useContext(ResposnsivenessContext)
   return (
     <div className={clsx('flex flex-col border-[#FFFFFF66] px-4 pt-8', { 'border-b-[0.5px]': tag !== 'Categories' })}>
       <div className="flex flex-row items-center gap-4">
@@ -31,7 +33,7 @@ const FilterSection = ({ tagImg, tag, filterLists, filter, onChange }: FilterSec
             ) : (
               <div className="border-gray-400 border-2 w-[17px] h-[18px]" onClick={() => onChange(value, true)}></div>
             )}
-            <span>{value}</span>
+            <span className={`${showBurgerMenu ? 'text-sm' : ' text-lg'}`}>{value}</span>
           </div>
         ))}
       </div>

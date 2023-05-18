@@ -30,7 +30,7 @@ export default function PromptsOwned() {
 
     return (
         <div className='m-20'>
-            <div className='mb-10 gap-2 flex '>
+            <div className='mb-10 gap-2 flex  flex-wrap'>
                 <button className='active:bg-gray-200 active:text-black' onClick={renderDashboard}>Dashboard</button>
                 <button className='active:bg-gray-200 active:text-black' onClick={renderPrompts}>Prompts</button>
                 <button className='active:bg-gray-200 active:text-black' onClick={renderSales}>Sales</button>

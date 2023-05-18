@@ -4,8 +4,9 @@ import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute, SendEmailToChatUrl } from "../utils/apis";
 import Picker from 'emoji-picker-react'
 import { UserContext } from "@/contexts/UserContext";
+import { ResposnsivenessContext } from "@/contexts/responsiveWidthContext";
 
-export default function ChatContainer({ currentChat, socket }: any) {
+export default function ChatContainer({ currentChat, socket, isOpenContacts, setIsOpenContacts, isOpenContactInfo, setIsOpenContactInfo }: any) {
     const { currentUser } = useContext(UserContext)
     const [messages, setMessages] = useState([]);
     const scrollRef = useRef();
@@ -13,6 +14,7 @@ export default function ChatContainer({ currentChat, socket }: any) {
     const [msg, setMsg] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [loading, setLoading] = useState(false)
+    const { removeSocialIcons } = useContext(ResposnsivenessContext)
 
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
@@ -91,18 +93,24 @@ export default function ChatContainer({ currentChat, socket }: any) {
     return (
         <div className="chats-container">
             <div className="chat-header">
-                <div className="user-details">
-                    <div className="avatar">
-                        {currentChat.avatarImage ?
-                            <img
-                                src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-                                alt=""
-                            /> :
-                            <img src="./avatars/avatar2.png" alt="" />
-                        }
+                <div className="user-details justify-between w-full">
+                    <div className="flex flex-row justify-center items-center gap-2">
+                        <div className="" onClick={() => setIsOpenContacts(!isOpenContacts)}><i className="fa fa-comments text-3xl text-slate-950"></i></div>
+                        <div className="avatar">
+                            {currentChat.avatarImage ?
+                                <img
+                                    src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
+                                    alt=""
+                                /> :
+                                <img src="./avatars/avatar2.png" alt="" />
+                            }
+                        </div>
+                        <div className="username">
+                            <h3>{currentChat.username}</h3>
+                        </div>
                     </div>
-                    <div className="username">
-                        <h3>{currentChat.username}</h3>
+                    <div className="contact-info" onClick={() => setIsOpenContactInfo(!isOpenContactInfo)}>
+                        <i className="fa fa-user-circle text-slate-900 text-3xl"></i>
                     </div>
                 </div>
             </div>
@@ -128,8 +136,9 @@ export default function ChatContainer({ currentChat, socket }: any) {
                 </div>
             }
             <div className="input-container">
-                <form className="input-form" onSubmit={(event) => sendChat(event)}>
+                <form className="input-form " onSubmit={(event) => sendChat(event)}>
                     <input
+                        className={``}
                         type="text"
                         placeholder="type your message here"
                         onChange={(e) => setMsg(e.target.value)}

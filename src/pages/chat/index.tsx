@@ -9,6 +9,7 @@ import Welcome from '@/components/Welcome';
 import ChatContainer from '@/components/ChatContainer';
 import { ChatContactsContext } from '@/contexts/chatContactsContext';
 import UserInfoContainer from '@/components/UserInfoContainer';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 const Chat: NextPage = () => {
   const socket = useRef();
@@ -17,6 +18,7 @@ const Chat: NextPage = () => {
   // const [contacts, setContacts] = useState([]);
   const { contacts } = useContext(ChatContactsContext);
   const [currentChat, setCurrentChat] = useState(undefined);
+  const { removeSocialIcons, chatBreakPoint } = useContext(ResposnsivenessContext)
 
 
   useEffect(() => {
@@ -48,19 +50,28 @@ const Chat: NextPage = () => {
   const handleChatChange = (chat: any) => {
     setCurrentChat(chat);
   };
+  const [isOpenContacts, setIsOpenContacts] = useState(false);
+  const [isOpenContactInfo, setIsOpenContactInfo] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpenContacts(!isOpenContacts);
+  };
 
   return (
-    <div className="container-chat-system">
-      <Contacts contacts={contacts} changeChat={handleChatChange} />
+    <div className={`${removeSocialIcons ? '' : 'm-0'} container-chat-system`}>
 
-      {currentChat === undefined ? (
-        <Welcome />
+      <Contacts contacts={contacts} changeChat={handleChatChange} isOpenContacts={isOpenContacts} setIsOpenContacts={setIsOpenContacts} />
+
+      {(currentChat === undefined) ? (
+        <Welcome isOpenContacts={isOpenContacts} setIsOpenContacts={setIsOpenContacts} />
       ) : (
         <>
-          <ChatContainer currentChat={currentChat} socket={socket} />
-          <UserInfoContainer  currentChat={currentChat} ></UserInfoContainer>
+          <ChatContainer currentChat={currentChat} socket={socket} isOpenContacts={isOpenContacts} setIsOpenContacts={setIsOpenContacts} isOpenContactInfo={isOpenContactInfo} setIsOpenContactInfo={setIsOpenContactInfo} />
+          <UserInfoContainer currentChat={currentChat} isOpenContactInfo={isOpenContactInfo} setIsOpenContactInfo={setIsOpenContactInfo} ></UserInfoContainer>
         </>
-      )}
+      )
+      }
+
     </div>
   );
 }

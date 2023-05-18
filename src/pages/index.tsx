@@ -13,6 +13,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { stripeSellerAccIdUrl, updateUser } from '@/utils/apis';
 import { UserContext } from '@/contexts/UserContext';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 export default function Home() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function Home() {
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
   const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { removeSiteName } = useContext(ResposnsivenessContext)
 
   const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
 
@@ -94,7 +96,7 @@ export default function Home() {
         <div className="container flex flex-col items-center mx-auto mb-36">
           <div className="grid grid-cols-3 gap-x-5 px-28 pb-7 mb-16 border-b-[0.5px] border-b-white">
             <button className={`prompts-button ${currentTab === 'feature' ? 'active' : ''}`} onClick={() => handleCurentTab('feature')}>Featured Prompts</button>
-            <button className={`prompts-button ${currentTab === 'trending' ? 'active' : ''}`} onClick={() => handleCurentTab('trending')}>Trending Prompts</button>
+            <button className={`${removeSiteName ? '' : 'text-xl'} prompts-button ${currentTab === 'trending' ? 'active' : ''}`} onClick={() => handleCurentTab('trending')}>Trending Prompts</button>
             <button className={`prompts-button ${currentTab === 'newest' ? 'active' : ''}`} onClick={() => handleCurentTab('newest')}>Newest Prompts</button>
           </div>
           {
