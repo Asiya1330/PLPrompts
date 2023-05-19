@@ -57,7 +57,7 @@
   }
 
   .prompts-button {
-    @apply px-10 py-5 mr-5 bg-transparent text-white border border-[#FFFFFF33] rounded-[9px];
+    @apply px-10 py-5 bg-transparent text-white border border-[#FFFFFF33] rounded-[9px];
 
     &.active {
       @apply bg-green text-black border-none;
@@ -89,7 +89,7 @@
   }
 
   .blog {
-    @apply container flex gap-28 mx-auto mb-20;
+    @apply container flex gap-8 mx-auto mb-20;
 
     &>img {
       @apply border-8 border-[#FFFFFF66] rounded-[5px];
@@ -269,7 +269,7 @@
   }
 
   .welcome {
-    // margin: 30px;
+    height: calc(100vh - 1.6rem);
     display: flex;
     width: 100%;
     border-left: 1.02875px solid rgba(255, 255, 255, 0.1);
@@ -342,8 +342,8 @@
     }
 
     .chat-messages {
-      padding: 1rem 2rem;
-      height: calc(100% - 9rem);
+      padding: 1rem 2rem 7rem 2rem;
+      height: calc(100vh - 6rem);
       overflow: scroll;
       overflow-x: hidden;
       display: flex;
@@ -453,7 +453,7 @@
           flex-direction: row;
           justify-content: center;
           align-items: center;
-          z-index: 99;
+          z-index: 9;
           cursor: pointer;
           
           .emoji-selector {
@@ -507,4 +507,31 @@
         }
       }
     }
+}
+.btn-container-730{
+  gap: 5px !important;
+  .button730{
+    padding: 5px 20px;
+    font-size: 16px !important;
+    height: 60px;
+  }
+}
+.button420{
+  padding: 5px 10px;
+  font-size: 14px;
+  height: 40px;
+  border-radius: 20px;
+}
+
+.capsule420{
+  font-size: 12px;
+  padding: 2px 9px!important;
+  margin: 5px !important;
+  align-items: center;
+}
+
+.input420{
+  padding: 12px !important;
+  color: black;
+  border-radius: 25px;
 }

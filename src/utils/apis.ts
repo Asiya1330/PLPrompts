@@ -1,4 +1,4 @@
-export const host = process.env.NEXT_PUBLIC_BEAPI || 'https://newserverprompt.promptheaven.ai';
+export const host = 'https://promptheaven-apis.promptheaven.ai';
 export const loginRoute = `${host}/api/auth/login`;
 export const registerRoute = `${host}/api/auth/register`;
 export const logoutRoute = `${host}/api/auth/logout`;

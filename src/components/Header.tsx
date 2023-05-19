@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
@@ -5,8 +7,10 @@ import { SOCIAL_LINKS, ROUTE_MAP } from '@/helpers/constants';
 import { useContext, useState, useEffect } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
+import { useRouter } from 'next/router';
 
 export default function Header() {
+  const router = useRouter()
   const { currentUser } = useContext(UserContext);
   const { removeSocialIcons, showBurgerMenu, removeSiteName } = useContext(ResposnsivenessContext)
   const [isBurgerMenuIconVisible, setBurgerMenuIconVisible] = useState(false);
@@ -26,8 +30,9 @@ export default function Header() {
         <div className="grow flex items-center px-3 border-r-[0.5px] border-[#FFFFFF66]">
           <div className="container flex items-center mx-auto">
             <div className="grow flex items-center px-4 py-3 mr-4 border-[0.5px] border-[#FFFFFF99] rounded-full">
+              { }
               <input
-                className="grow bg-transparent outline-none placeholder:text-white placeholder:text-sm placeholder:leading-4"
+                className={` ${!removeSiteName ? 'w-20' : ''} grow bg-transparent outline-none placeholder:text-white placeholder:text-sm placeholder:leading-4`}
                 type="text"
                 placeholder="Search Prompts..."
               />
@@ -77,8 +82,18 @@ export default function Header() {
 
                 <nav className={`burger-menu h-screen w-screen fixed top-0 left-0 bg-slate-900 items-center justify-center z-20 m-auto ${isBurgerMenuIconVisible ? '' : 'hidden'} `}>
 
-                  <div className='gap-1 flex flex-col right-0 w-8 mt-[4%] ml-[92%] cursor-pointer' onClick={() => setBurgerMenuIconVisible(!isBurgerMenuIconVisible)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div
+                    className='gap-1 flex left-0 w-full mt-[4%] cursor-pointer flex-row justify-between'
+                    onClick={() => setBurgerMenuIconVisible(!isBurgerMenuIconVisible)}
+                  >
+                    <img src="/logo.png" alt=""
+                      className='w-10 h-10 m-2'
+                      onClick={() => {
+
+                        router.push('/')
+                      }} />
+                    <svg
+                      className='w-10' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18" />
                       <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
@@ -88,28 +103,28 @@ export default function Header() {
                   <ul className="text-center flex  justify-center items-center h-[80vh]" onClick={() => setBurgerMenuIconVisible(false)}>
                     <nav className="flex opacity-70  gap-3 flex-col text-center items-center  justify-center">
                       {ROUTE_MAP.map(({ title, href, icon }) => (
-                        <Link key={title} className="flex text-sm items-center mx-2 last:mr-0" href={href}>
+                        <Link key={title} className="flex text-xl items-center mx-2 last:mr-0" href={href}>
                           {title}
                           {icon && <Icon className="ml-1">{icon}</Icon>}
                         </Link>
                       ))}
-                      <Link key='Chat' className="flex items-center text-sm mx-2 last:mr-0" href='/chat'>
+                      <Link key='Chat' className="flex items-center text-xl mx-2 last:mr-0" href='/chat'>
                         Chat
                       </Link>
                       {
                         //@ts-ignore
                         !(currentUser && currentUser.email) ?
-                          <Link key='Login' className="flex items-center text-sm mx-2 last:mr-0" href='/login'>
+                          <Link key='Login' className="flex items-center text-xl mx-2 last:mr-0" href='/login'>
                             Login
                           </Link>
                           :
                           <>
-                            <Link key='PromptsOwned' className="flex text-sm items-center mx-2 last:mr-0" href='/prompts-owned'>
+                            <Link key='PromptsOwned' className="flex text-xl items-center mx-2 last:mr-0" href='/prompts-owned'>
                               Account
                             </Link>
                             {
                               (currentUser?.role === 'admin') &&
-                              <Link key='Approval' className="flex text-sm items-center mx-2 last:mr-0" href='/approval'>
+                              <Link key='Approval' className="flex text-xl items-center mx-2 last:mr-0" href='/approval'>
                                 Approval
                               </Link>
                             }

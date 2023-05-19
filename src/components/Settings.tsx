@@ -47,7 +47,7 @@ export default function Settings() {
                         {username && <button className='active:bg-gray-200 active:text-black'>Set Username</button>}
                     </div>
                 </div>
-                <button className="btn logout-btn active:bg-gray-200 active:text-black" onClick={handleSignOut}>Logout</button>
+                <button className="btn bg-white text-black logout-btn active:bg-gray-200 active:text-black" onClick={handleSignOut}>Logout</button>
             </div>
         </div>
     )

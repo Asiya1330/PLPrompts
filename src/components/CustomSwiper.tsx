@@ -5,6 +5,8 @@ import SlideNextButton from './SlideNextButton';
 import SlidePrevButton from './SlidePrevButton';
 import PromptCard from './PromptCard';
 import PromptEngineer from './PromptEngineer';
+import { useContext } from 'react';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 interface CustomSwiperProps {
   title: string;
@@ -13,8 +15,9 @@ interface CustomSwiperProps {
 }
 
 export default function CustomSwiper({ title, type = 'prompt', data }: CustomSwiperProps) {
+  const { chatBreakPoint, removeSiteName } = useContext(ResposnsivenessContext)
   return (
-    <Swiper className="relative py-20 w-full" slidesPerView={4} spaceBetween={24} loop={true}>
+    <Swiper className="relative py-20 w-full" slidesPerView={chatBreakPoint ? (removeSiteName ? 3 : 2) : 4} spaceBetween={24} loop={true}>
       <div className="prompts-swiper-action">
         <div>
           <h3>{title}</h3>

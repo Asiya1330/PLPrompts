@@ -1,8 +1,9 @@
-// //@ts-nocheck
+//@ts-nocheck
 import PromptCard from '@/components/PromptCard';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
 import { ChatContactsContext } from '@/contexts/chatContactsContext';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 import { addChatUrl } from '@/utils/apis';
 import axios from 'axios';
 import Image from 'next/image';
@@ -12,6 +13,7 @@ import { useState, useContext, useEffect } from 'react';
 export default function Hero() {
 
   const { prompts } = useContext(PromptsContext)
+  const { chatBreakPoint } = useContext(ResposnsivenessContext)
   const [fourHighestScoredPrompt, setFourHighestScoredPrompt] = useState();
   const { currentUser } = useContext(UserContext)
   const { setContacts } = useContext(ChatContactsContext)
@@ -49,20 +51,24 @@ export default function Hero() {
   return (
     <div className="w-full flex flex-row justify-center items-center">
       <div className="flex flex-col gap-y-32">
-        <PromptCard
-          price={fourHighestScoredPrompt?.['GPT']?.price}
-          key={fourHighestScoredPrompt?.['GPT']?.name}
-          name={fourHighestScoredPrompt?.['GPT']?.name}
-          tag={fourHighestScoredPrompt?.['GPT']?.type}
-          image={fourHighestScoredPrompt?.['GPT']?.images?.length ? fourHighestScoredPrompt['GPT']?.images[0] : ''}
-        />
-        <PromptCard
-          price={fourHighestScoredPrompt?.['Midjourney']?.price}
-          key={fourHighestScoredPrompt?.['Midjourney']?.name}
-          name={fourHighestScoredPrompt?.['Midjourney']?.name}
-          tag={fourHighestScoredPrompt?.['Midjourney']?.type}
-          image={fourHighestScoredPrompt?.['Midjourney']?.images?.length ? fourHighestScoredPrompt['Midjourney']?.images[0] : ''}
-        />
+        {!chatBreakPoint &&
+          <>
+            <PromptCard
+              price={fourHighestScoredPrompt?.['GPT']?.price}
+              key={fourHighestScoredPrompt?.['GPT']?.name}
+              name={fourHighestScoredPrompt?.['GPT']?.name}
+              tag={fourHighestScoredPrompt?.['GPT']?.type}
+              image={fourHighestScoredPrompt?.['GPT']?.images?.length ? fourHighestScoredPrompt['GPT']?.images[0] : ''}
+            />
+            <PromptCard
+              price={fourHighestScoredPrompt?.['Midjourney']?.price}
+              key={fourHighestScoredPrompt?.['Midjourney']?.name}
+              name={fourHighestScoredPrompt?.['Midjourney']?.name}
+              tag={fourHighestScoredPrompt?.['Midjourney']?.type}
+              image={fourHighestScoredPrompt?.['Midjourney']?.images?.length ? fourHighestScoredPrompt['Midjourney']?.images[0] : ''}
+            />
+          </>
+        }
       </div>
 
       <div className="flex flex-col justify-center items-center">
@@ -99,22 +105,26 @@ export default function Hero() {
         </h2>
       </div>
       <div className="flex flex-col gap-y-32">
-        <PromptCard
-          price={fourHighestScoredPrompt?.['DALL-E']?.price}
-          key={fourHighestScoredPrompt?.['DALL-E']?.name}
-          name={fourHighestScoredPrompt?.['DALL-E']?.name}
-          tag={fourHighestScoredPrompt?.['DALL-E']?.type}
-          image={fourHighestScoredPrompt?.['DALL-E']?.images?.length ? fourHighestScoredPrompt?.['DALL-E']?.images[0] : ''}
-        />
-        <div className="ml-10">
-          <PromptCard
-            price={fourHighestScoredPrompt?.['Stable Diffusion']?.price}
-            key={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
-            name={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
-            tag={fourHighestScoredPrompt?.['Stable Diffusion']?.type}
-            image={fourHighestScoredPrompt?.['Stable Diffusion']?.images?.length ? fourHighestScoredPrompt['Stable Diffusion']?.images[0] : ''}
-          />
-        </div>
+        {!chatBreakPoint &&
+          <>
+            <PromptCard
+              price={fourHighestScoredPrompt?.['DALL-E']?.price}
+              key={fourHighestScoredPrompt?.['DALL-E']?.name}
+              name={fourHighestScoredPrompt?.['DALL-E']?.name}
+              tag={fourHighestScoredPrompt?.['DALL-E']?.type}
+              image={fourHighestScoredPrompt?.['DALL-E']?.images?.length ? fourHighestScoredPrompt?.['DALL-E']?.images[0] : ''}
+            />
+            <div className="ml-10">
+              <PromptCard
+                price={fourHighestScoredPrompt?.['Stable Diffusion']?.price}
+                key={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
+                name={fourHighestScoredPrompt?.['Stable Diffusion']?.name}
+                tag={fourHighestScoredPrompt?.['Stable Diffusion']?.type}
+                image={fourHighestScoredPrompt?.['Stable Diffusion']?.images?.length ? fourHighestScoredPrompt['Stable Diffusion']?.images[0] : ''}
+              />
+            </div>
+          </>
+        }
       </div>
     </div>
   );

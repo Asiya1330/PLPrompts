@@ -7,7 +7,7 @@ import { ResposnsivenessContext } from '../contexts/responsiveWidthContext'
 export interface PromptCardProps extends Prompt { }
 
 export default function PromptCard({ name, price, tag, image, rating, clickable = true }: PromptCardProps) {
-  const { showBurgerMenu } = useContext(ResposnsivenessContext)
+  const { showBurgerMenu,removeSiteName } = useContext(ResposnsivenessContext)
   const getDirection = (rating: number | undefined) => (rating ? 'row' : 'row-reverse');
   const router = useRouter();
   // console.log(name);
@@ -22,10 +22,10 @@ export default function PromptCard({ name, price, tag, image, rating, clickable 
 
     <div
       onClick={handlePromptRoute}
-      className={`flex flex-col ${showBurgerMenu ? 'w-[150px] h-[150px]' : 'w-[270px] h-[240px]'}  bg-no-repeat bg-cover bg-center border-2 border-[#FFFFFF4D] rounded-lg ${clickable && 'cursor-pointer transition hover:mt-5'} `}
+      className={`flex flex-col ${showBurgerMenu ? 'w-[150px] h-[150px]' : 'w-[270px] h-[240px]'}  bg-no-repeat bg-cover bg-center border-2 border-[#FFFFFF4D] rounded-lg ${clickable && 'cursor-pointer'} `}
       style={{ backgroundImage: `url('${image ? image : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqS5LrOuT4ZRx1JNLOiOsEasceszJJ1Rjo6w&usqp=CAU`}')` }}
     >
-      <div className="flex justify-between p-3.5" style={{ flexDirection: getDirection(rating) }}>
+      <div className={`p-3.5 flex justify-between `} style={{ flexDirection: getDirection(rating) }}>
         <TagCard type={tag} />
         {rating && <TagCard type="rating" value={rating.toString()} />}
       </div>

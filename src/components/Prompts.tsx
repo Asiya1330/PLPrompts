@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { PromptsContext } from '@/contexts/PromptsContext'
 import { UserContext } from '@/contexts/UserContext';
 import React, { useContext, useEffect, useState } from 'react'

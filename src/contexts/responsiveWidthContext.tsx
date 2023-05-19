@@ -21,6 +21,11 @@ const ResposnsivenessProvider = ({ children }) => {
 
 
     useEffect(() => {
+        console.log(process.env.NEXT_PUBLIC_BEAPI,
+            process.env.NEXT_PUBLIC_LOCALHOST_KEY,
+            process.env.REMOTE_URL,process.env.JWT_SECRET,
+            process.env.NEXT_PUBLIC_EXPRESS_ACCOUNT_LINK,'hehe2 vars');
+
         const handleResize = () => {
             const width = window.innerWidth;
             if (width >= 950) setRemoveSocialIcons(true)

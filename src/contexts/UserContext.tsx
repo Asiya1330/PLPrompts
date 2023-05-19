@@ -33,6 +33,8 @@ export default function UserProvider({ children }: any) {
   console.log(session);
 
   useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_BEAPI, 'hehe');
+    
     const getUserFromSession = async () => {
       if (process.env.NEXT_PUBLIC_LOCALHOST_KEY) {
         const storedData = localStorage.getItem(process.env.NEXT_PUBLIC_LOCALHOST_KEY);

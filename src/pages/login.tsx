@@ -31,7 +31,7 @@ const Login: NextPage = () => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
+    <div className="w-full flex flex-col justify-center items-center ">
       <h3 className="pt-16 py-10 text-cener">{isLogin ? 'Sign In' : 'Create An Account'}</h3>
       <LoginForm onChildData={handleChildData} />
     </div>

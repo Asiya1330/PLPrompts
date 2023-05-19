@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { UserContext } from "@/contexts/UserContext";
 import React, { useContext } from "react";
 

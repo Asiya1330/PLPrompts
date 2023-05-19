@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import FilterSection from '@/components/FilterSection';
 import { FilterSections } from '@/helpers/mock';
 import Icon from '@/components/Icon';
@@ -10,7 +12,7 @@ import { getAllPrompts, getAllPromptsByHourlyFactor } from '@/utils/apis';
 import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 export default function Marketplace() {
-  const { showBurgerMenu } = useContext(ResposnsivenessContext)
+  const { showBurgerMenu, removeSiteName } = useContext(ResposnsivenessContext)
   const [currentPage, setCurrentPage] = useState(1);
   const [sortByCaption, setSortByCaption] = useState('Trending');
 
@@ -94,7 +96,7 @@ export default function Marketplace() {
   return (
     <>
       <div className="flex">
-        <div id="filterSection" className={`${showBurgerMenu ? 'w-[150px]':' w-[275px]'} shrink-0 border-r-[0.5px] border-[#FFFFFF66]`}>
+        <div id="filterSection" className={`${showBurgerMenu ? 'w-[150px]' : ' w-[275px]'} shrink-0 border-r-[0.5px] border-[#FFFFFF66]`}>
           <div className="flex flex-col">
             {Object.entries(FilterSections).map(([section, { tagImg, tagTitle, filterLists }], index) => (
               <>
@@ -113,9 +115,9 @@ export default function Marketplace() {
         {(loading) ? <div className='mr-auto ml-auto text-xl mt-10'>Loading...</div> :
 
 
-          <div id="trendingPrompts" className={`${showBurgerMenu ? 'p-4' : 'pt-8 px-8'} flex flex-col  w-full mx-auto`}>
+          <div id="trendingPrompts" className={`${!removeSiteName ? 'p-[2px]' : (showBurgerMenu ? 'p-4' : 'pt-8 px-8')} flex flex-col  w-full mx-auto`}>
             <h3 className={`${showBurgerMenu ? 'text-xl' : ''} pb-8`}>{sortByCaption === 'Trending' ? 'Trending Prompts' : 'Most Popular Prompts'}</h3>
-            <div className="w-full flex flex-row m-2 gap-2 mb-16 justify-start align-middle flex-wrap">
+            <div className={`m-2 w-full flex flex-row  gap-2 mb-16 justify-start align-middle flex-wrap`}>
 
               { //@ts-ignore
                 filteredPrompts && filteredPrompts?.map(({ name, price, type, images }: any, idx: number) => (
@@ -129,7 +131,7 @@ export default function Marketplace() {
                 </div>
               )}
 
-            <div className=" flex gap-x-2 pb-14 ml-auto flex-wrap">
+            {/* <div className=" flex gap-x-2 pb-14 ml-auto flex-wrap">
               <button className="slider-button" onClick={() => handleClick('back')}>
                 <Icon>left</Icon>
               </button>
@@ -178,7 +180,7 @@ export default function Marketplace() {
               <button className="slider-button" onClick={() => handleClick('next')}>
                 <Icon>right</Icon>
               </button>
-            </div>
+            </div> */}
           </div>
         }
       </div>

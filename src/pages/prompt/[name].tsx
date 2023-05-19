@@ -6,6 +6,7 @@ import { UserContext } from '@/contexts/UserContext';
 import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptPurchaseByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
 import axios from 'axios';
 import { isAdmin } from '@/lib/auth';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 export default function SinglePrompt() {
 
@@ -17,7 +18,7 @@ export default function SinglePrompt() {
     const { prompts, setPrompts, setFeaturedPrompts, featuredPrompts } = useContext(PromptsContext);
     const [isClicked, setIsClicked] = useState(false);
     const heartImageRef = useRef()
-
+    const {removeSocialIcons} = useContext(ResposnsivenessContext)
     const { name } = router.query;
 
     useEffect(() => {
@@ -132,32 +133,32 @@ export default function SinglePrompt() {
 
     if (!promptUser) return <div>Loading...</div>
     else return (
-        <div className='m-10 gap-1 flex flex-row'>
+        <div className={`${!removeSocialIcons ? 'flex-col':'flex-row'} m-10 gap-1 flex `}>
             {(!prompt) ? 'Loading...'
                 :
                 <>
-                    <div className="leftSide w-[60%] m-5">
+                    <div className={`${!removeSocialIcons ? 'w-full items-center flex flex-col':'w-[60%]'} leftSide gap-4`}>
                         <div className="headerImage mb-5">
                             <img src={prompt.images[0]} alt="" className='min-w-full max-h-[245px]' />
                         </div>
-                        <div className="promptName ">
-                            <p className='text-5xl  relative text-start mb-5'>
+                        <div className={`${!removeSocialIcons ? 'items-center ':'text-start'} promptName m-2 flex  flex-col`}>
+                            <p className={`${!removeSocialIcons ? 'text-center ':'text-start'} text-5xl  relative mb-5 w-80 truncate`}>
 
                                 {prompt.name} <span className='text-xl text-gray-500 cursor-pointer' title='edit title'></span>
                             </p>
                             {
                                 (currentUser?._id && (currentUser?._id === prompt?.userId)) &&
-                                <button>Edit prompt &#x270E;</button>
+                                <button className='button420'>Edit prompt &#x270E;</button>
                             }
                             {
                                 isAdmin(currentUser) && !prompt?.isFeature &&
-                                <button className='mark-feature' onClick={handleMarkFeature}>Mark Feature</button>
+                                <button className='mark-feature button420' onClick={handleMarkFeature}>Mark Feature</button>
                             }
                         </div>
-                        <div className="promptInfo flex align-middle flex-row w-full justify-between">
+                        <div className={`${!removeSocialIcons ? 'flex-col items-center gap-2':'flex-row'} promptInfo flex align-middle w-full justify-between`}>
                             <div className="owner-seller flex align-middle flex-row gap-5">
 
-                                <div className="sellerStats flex align-middle flex-row" title='seller stats'>
+                                <div className="sellerStats flex align-middle flex-row items-center" title='seller stats'>
                                     <img src="/icons/tag.svg" alt="" className=' w-[17px] mr-[5px]' /> <span>{prompt.purchaseCount ? prompt.purchaseCount : 0}</span>
                                 </div>
                                 <div className="promptOwner cursor-pointer bg-white rounded text-black p-2" onClick={handleOwnerProfile}>
@@ -165,20 +166,20 @@ export default function SinglePrompt() {
                                 </div>
 
                             </div>
-                            <div className="rate-view-favs flex align-middle flex-row gap-5">
+                            <div className="rate-view-favs flex align-middle flex-row gap-5 items-center">
                                 <div className="rating">
                                     {prompt.rating ? prompt.rating : 'no ratings'}
                                 </div>
-                                <div className="views flex align-middle flex-row" title='views'>
+                                <div className="views flex align-middle flex-row items-center" title='views'>
                                     <img src="/icons/eye.svg" alt="" className=' w-[17px] mr-2' /><span>{prompt.views}</span>
                                 </div>
-                                <button className="favs p-0 border-none flex flex-row align-middle justify-center" title='mark as favourites' onClick={handleMarkFav} disabled={isClicked} >
+                                <button className="favs items-center  p-0 border-none flex flex-row align-middle justify-center" title='mark as favourites' onClick={handleMarkFav} disabled={isClicked} >
                                     <img ref={heartImageRef} src="/icons/heart.svg" alt="" style={{ color: "white" }} className=' mr-2' />
                                     <span>{prompt.likes}</span>
                                 </button>
                             </div>
                         </div>
-                        <hr className='mb-5 mt-5' />
+                        <hr className='mb-5 mt-5 h-[0.2px] w-full bg-white' />
 
                         <div className="description mb-5">
                             {prompt.description}
@@ -201,8 +202,8 @@ export default function SinglePrompt() {
                         <p className='flex justify-start mt-3'>{prompt.createdAt}</p>
 
                     </div>
-                    <div className="rightSide mt-5 w-[42%]">
-                        <div className="imagesCont h-[100vh] flex flex-col overflow-auto">
+                    <div className={`${!removeSocialIcons ? 'w-full':'w-[42%]'} rightSide mt-5 `}>
+                        <div className={`${!removeSocialIcons ? 'flex-row':'flex-col h-[100vh]'} imagesCont  flex overflow-auto`}>
                             {
                                 prompt.images.map((image) => {
                                     return <img src={image} alt="" className='max-w-full max-h-full block' />

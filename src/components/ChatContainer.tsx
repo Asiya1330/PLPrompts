@@ -14,7 +14,7 @@ export default function ChatContainer({ currentChat, socket, isOpenContacts, set
     const [msg, setMsg] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [loading, setLoading] = useState(false)
-    const { removeSocialIcons } = useContext(ResposnsivenessContext)
+    const { chatBreakPoint, removeSiteName } = useContext(ResposnsivenessContext)
 
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
@@ -95,7 +95,11 @@ export default function ChatContainer({ currentChat, socket, isOpenContacts, set
             <div className="chat-header">
                 <div className="user-details justify-between w-full">
                     <div className="flex flex-row justify-center items-center gap-2">
-                        <div className="" onClick={() => setIsOpenContacts(!isOpenContacts)}><i className="fa fa-comments text-3xl text-slate-950"></i></div>
+                        {chatBreakPoint &&
+                            <div className="" onClick={() => setIsOpenContacts(!isOpenContacts)}>
+                                <i className="fa fa-comments text-3xl text-slate-950"></i>
+                            </div>
+                        }
                         <div className="avatar">
                             {currentChat.avatarImage ?
                                 <img
@@ -109,9 +113,11 @@ export default function ChatContainer({ currentChat, socket, isOpenContacts, set
                             <h3>{currentChat.username}</h3>
                         </div>
                     </div>
-                    <div className="contact-info" onClick={() => setIsOpenContactInfo(!isOpenContactInfo)}>
-                        <i className="fa fa-user-circle text-slate-900 text-3xl"></i>
-                    </div>
+                    {chatBreakPoint &&
+                        <div className="contact-info" onClick={() => setIsOpenContactInfo(!isOpenContactInfo)}>
+                            <i className="fa fa-user-circle text-slate-900 text-3xl"></i>
+                        </div>
+                    }
                 </div>
             </div>
             {loading ? <div className="flex flex-row items-end justify-center h-[80%]">Loading...</div> :
@@ -137,10 +143,11 @@ export default function ChatContainer({ currentChat, socket, isOpenContacts, set
             }
             <div className="input-container">
                 <form className="input-form " onSubmit={(event) => sendChat(event)}>
+
                     <input
-                        className={``}
+                        className={` ${!removeSiteName ? 'w-20' : ""}`}
                         type="text"
-                        placeholder="type your message here"
+                        placeholder="Type Here!"
                         onChange={(e) => setMsg(e.target.value)}
                         value={msg}
                     />
@@ -150,9 +157,16 @@ export default function ChatContainer({ currentChat, socket, isOpenContacts, set
                                 <img src="./icons/emoti.svg" alt="" />
                             </div>
                         </div>
-                        <button type="submit">
-                            <span><img src="./icons/send.svg" alt="" /></span> Send
-                        </button>
+                        {!removeSiteName ?
+                            <button type="submit"
+                                className={`w-8 p-2 bg-transparent `}>
+                                <span className="text-white"><img src="./icons/send.svg" alt="" /></span>
+                            </button> :
+                            <button type="submit"
+                                className={``}>
+                                <> <span className=""><img src="./icons/send.svg" alt="" /></span> Send</>
+                            </button>
+                        }
                     </div>
                 </form>
             </div>

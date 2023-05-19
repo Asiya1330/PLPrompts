@@ -2,22 +2,23 @@
 import { useContext } from "react";
 import { StepperContext } from "@/contexts/StepperContext";
 import { UserContext } from "@/contexts/UserContext";
+import { ResposnsivenessContext } from "@/contexts/responsiveWidthContext";
 
 interface SellPromptProps {
   handleClick: any;
 }
 
 const SellPrompt = ({ handleClick }: SellPromptProps) => {
-  const {currentUser} = useContext(UserContext);  
-
+  const { currentUser } = useContext(UserContext);
+  const { removeSocialIcons } = useContext(ResposnsivenessContext)
   const { userData, setUserData }: any = useContext(StepperContext);
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
   return (
-    <div className="w-full flex flex-row px-10 pb-10 ">
-      <div className="flex flex-col w-1/2 px-32 gap-y-4">
+    <div className={`${!removeSocialIcons ? 'flex-col items-center' : ''} w-full flex flex-row pb-10 `}>
+      <div className={`${!removeSocialIcons ? 'w-full items-center' : 'w-1/2'} flex flex-col  gap-y-4`}>
         <h2>
           Start Selling your
           <span className="gradient-text">&nbsp;Own Prompts</span>
@@ -51,7 +52,7 @@ const SellPrompt = ({ handleClick }: SellPromptProps) => {
           <span className="text-yellow">Prompts</span>
         </p>
       </div>
-      <div className="flex w-1/2">
+      <div className={`${!removeSocialIcons ? 'w-full items-center' : 'w-1/2'} flex `}>
         <iframe
           className="mx-auto lg:float-right w-full lg:w-[555px] h-[330px] lg:h-[420px] z-0"
           src="https://player.vimeo.com/video/803439591?h=b962ddd0b6"

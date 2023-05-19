@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { useContext, useState, useEffect } from 'react'
 import { createContext } from 'react'
 import { UserContext } from './UserContext';

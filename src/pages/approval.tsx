@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { useContext, useEffect, useState } from 'react'
 import { isAdmin } from '../lib/auth';
 import { UserContext } from '../contexts/UserContext'

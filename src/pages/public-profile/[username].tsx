@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import CustomSwiper from '@/components/CustomSwiper';
 import { UserContext } from '@/contexts/UserContext';
 import { ChatContactsContext } from '@/contexts/chatContactsContext';

@@ -23,7 +23,7 @@ export default function Home() {
   const [dallePrompts, setDallEPrompts] = useState([]);
   const [diffusionPrompts, setDiffusion] = useState([]);
   const { currentUser, setCurrentUser } = useContext(UserContext);
-  const { removeSiteName } = useContext(ResposnsivenessContext)
+  const { removeSiteName, chatBreakPoint, showBurgerMenu } = useContext(ResposnsivenessContext)
 
   const { featuredPrompts, newestPrompts, prompts, monthlySortedPrompts, weeklySortedPrompts } = useContext(PromptsContext)
 
@@ -86,40 +86,40 @@ export default function Home() {
         <div className="container flex flex-col items-center mx-auto mb-36">
           <h3 className="mb-9 font-semibold">Featured In</h3>
 
-          <div className="flex flex-wrap max-w-[1005px] gap-y-8 -mr-20">
-            {FEATURED_MAP.map(({ title, image, width, height }, index) => (
-              <Image key={index} className="mr-20 last:mr-0" src={image} alt={title} width={width} height={height} />
+          <div className="flex flex-wrap gap-8">
+            {(FEATURED_MAP).map(({ title, image }, index) => (
+              <img key={index} className="mr-4 w-auto" src={image} alt={title} />
             ))}
           </div>
         </div>
 
         <div className="container flex flex-col items-center mx-auto mb-36">
-          <div className="grid grid-cols-3 gap-x-5 px-28 pb-7 mb-16 border-b-[0.5px] border-b-white">
-            <button className={`prompts-button ${currentTab === 'feature' ? 'active' : ''}`} onClick={() => handleCurentTab('feature')}>Featured Prompts</button>
-            <button className={`${removeSiteName ? '' : 'text-xl'} prompts-button ${currentTab === 'trending' ? 'active' : ''}`} onClick={() => handleCurentTab('trending')}>Trending Prompts</button>
-            <button className={`prompts-button ${currentTab === 'newest' ? 'active' : ''}`} onClick={() => handleCurentTab('newest')}>Newest Prompts</button>
+          <div className={`${chatBreakPoint && 'btn-container-730'} flex flex-row justify-evenly gap-x-5 px-28 pb-7 mb-16 border-b-[0.5px] border-b-white`}>
+            <button className={`prompts-button ${currentTab === 'feature' ? 'active' : ''} ${chatBreakPoint && 'button730'}`} onClick={() => handleCurentTab('feature')}>Featured Prompts</button>
+            <button className={`${removeSiteName ? '' : 'text-xl'} prompts-button ${currentTab === 'trending' ? 'active' : ''} ${chatBreakPoint && 'button730'}`} onClick={() => handleCurentTab('trending')}>Trending Prompts</button>
+            <button className={`prompts-button ${currentTab === 'newest' ? 'active' : ''} ${chatBreakPoint && 'button730'}`} onClick={() => handleCurentTab('newest')}>Newest Prompts</button>
           </div>
           {
             currentTab === 'feature' ?
-              <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+              <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                 {featuredPrompts.map(({ name, price, type, images }) => (
                   <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
                 ))}
               </div> :
               currentTab === 'trending' ?
-                <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+                <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                   {prompts.map(({ name, price, type, images }) => (
                     <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
                   ))}
                 </div> :
-                <div className="grid grid-cols-4 gap-x-6 gap-y-8 mb-16">
+                <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                   {newestPrompts.map(({ name, price, type, images }) => (
                     <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
                   ))}
                 </div>
           }
 
-          <button className="browse-button" onClick={() => router.push('/marketplace')}>
+          <button className="browse-button flex" onClick={() => router.push('/marketplace')}>
             <Link className="browse-button" href={'/marketplace'}>
               Browse Marketplace
             </Link>
@@ -152,16 +152,16 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="blog">
-          <Image src="/blogs/youtube.png" alt="youtube" width="555" height="330" />
+        <div className={` ${showBurgerMenu && 'align-middle items-center justify-center'} blog flex flex-row flex-wrap`}>
+          <img src="/blogs/youtube.png" alt="youtube" />
 
-          <div className='flex flex-col justify-center align-middle'>
-            <h2>Earn from your Prompt Engineering skills</h2>
+          <div className={`${showBurgerMenu && 'align-middle items-center justify-center'} flex flex-col justify-center align-middle w-[20rem]`}>
+            <h2 className={`${showBurgerMenu && 'text-center'}`}>Earn from your Prompt Engineering skills</h2>
 
-            <div className='flex justify-start flex-col gap-2'>
-              <div>PromptBase is an early marketplace for DALL·E, Midjourney, Stable Diffusion & GPT-3 prompts.</div>
-              <p>Sell your prompts on PromptBase and earn from your prompt crafting skills.</p>
-              <p>Upload your prompt, connect with Stripe, and become a seller in just 2 minutes.</p>
+            <div className={`${showBurgerMenu && 'align-middle items-center justify-center'}  flex justify-start flex-col gap-2 `}>
+              <div className={`${showBurgerMenu && 'text-center'}`}>PromptBase is an early marketplace for DALL·E, Midjourney, Stable Diffusion & GPT-3 prompts.</div>
+              <p className={`${showBurgerMenu && 'text-center'}`}>Sell your prompts on PromptBase and earn from your prompt crafting skills.</p>
+              <p className={`${showBurgerMenu && 'text-center'}`}>Upload your prompt, connect with Stripe, and become a seller in just 2 minutes.</p>
             </div>
 
             <Link className="mt-2 browse-button w-1/3 align-middle justify-center flex" href={'/sell'}>
@@ -179,13 +179,13 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="blog flex-row-reverse">
+        <div className={`${showBurgerMenu && 'align-middle items-center justify-center'} blog flex-row-reverse flex-wrap`}>
           <Image src="/blogs/generate.png" alt="generate" width="555" height="330" />
 
-          <div>
-            <h2>Generate images directly in PromptBase</h2>
+          <div className={`${showBurgerMenu && 'align-middle items-center justify-center '} w-[40rem]`}>
+            <h2 className={`${showBurgerMenu ? 'text-center' : ''}`}>Generate images directly in PromptBase</h2>
 
-            <div>
+            <div className={`${showBurgerMenu && 'text-center'}`}>
               <p>Start prompt engineering instantly within PromptBase using Stable Diffusion.</p>
               <p>Craft prompts and sell them on the marketplace.</p>
               <p>Get 5 free generation credits every day.</p>

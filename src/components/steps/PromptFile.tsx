@@ -2,6 +2,7 @@
 import { useContext, useState } from "react";
 import UploadFiles from '../UploadFiles'
 import { UserContext } from "@/contexts/UserContext";
+import { ResposnsivenessContext } from "@/contexts/responsiveWidthContext";
 
 
 const PromptFile = ({
@@ -48,15 +49,15 @@ const PromptFile = ({
 
   const [haveVariable, setHaveVariable] = useState("");
   const { currentUser } = useContext(UserContext);
-
+  const { removeSocialIcons } = useContext(ResposnsivenessContext)
   const handleChange = (e: any) => {
     setHaveVariable(e.target.value);
   };
 
 
   return (
-    <div className="w-full flex flex-row gap-10 px-10">
-      <div className="flex flex-col w-1/2 rounded-lg mx-auto min-w-[470px] items-center gap-y-2">
+    <div className={`${!removeSocialIcons ? 'flex-col items-center' : ' gap-4'} w-full flex flex-row items-center`}>
+      <div className={`${!removeSocialIcons ? 'w-full items-center' : 'w-1/2'}  flex flex-col rounded-lg items-center gap-y-2`}>
         {(type === 'GPT') &&
           <div>
             <div className="flex flex-col items-start justify-center">
@@ -622,7 +623,7 @@ const PromptFile = ({
           </div>
         }
       </div>
-      <div className="flex w-1/2">
+      <div className={`${!removeSocialIcons ? 'w-full items-center' : 'w-1/2'} flex `}>
         <iframe
           className="mx-auto lg:float-right w-full lg:w-[590px] h-[380px] lg:h-[420px] z-0"
           src="https://player.vimeo.com/video/803439591?h=b962ddd0b6"

@@ -9,7 +9,7 @@ const PromptDetail = ({
   setName }: any) => {
 
   return (
-    <div className="flex flex-col w-full rounded-lg w-[550px] mx-auto min-w-[470px] items-center gap-y-2">
+    <div className="flex flex-col w-full rounded-lg w-[550px] mx-auto  items-center gap-y-2">
       <div className="flex flex-col items-center justify-center">
         <h3>PromptDetail</h3>
         <p>Tell us about the prompt you want to sell.</p>

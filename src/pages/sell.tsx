@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import StepperControl from '@/components/StepperControl';
 import { useContext, useEffect, useState } from 'react';
 import SellPrompt from '@/components/steps/SellPrompt';
@@ -14,6 +16,7 @@ import { PromptsContext } from '@/contexts/PromptsContext';
 import axios from 'axios';
 import { connectBankAccUrl, insertPrompt, uploadImageByUserIdAndFile } from '@/utils/apis';
 import { useRouter } from 'next/router';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 
 const Sell: NextPageWithAuth = () => {
   const router = useRouter();
@@ -25,7 +28,7 @@ const Sell: NextPageWithAuth = () => {
   const [finalData, setFinalData] = useState([]);
   const [direction, setDirection] = useState('next');
   const steps = ['Sell a Prompt', 'Create An Account', 'Prompt Details', 'Prompt File', 'Get Paid', 'Thank you'];
-
+  const { removeSocialIcons,chatBreakPoint } = useContext(ResposnsivenessContext)
   //PromptDetails
   const [price, setPrice] = useState('2.99$');
   const [description, setDesc] = useState();
@@ -193,7 +196,7 @@ const Sell: NextPageWithAuth = () => {
 
       return alert('Please fill all fields before moving to next step')
     }
-    if (currentStep == 4 && type === 'Stable Diffusion' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !sd_model || !sd_sampler || !sd_img_width || !sd_img_height || !sd_cfg_scale || !sd_steps || !sd_neg_prompt || !promptIns )) {
+    if (currentStep == 4 && type === 'Stable Diffusion' && (!prompt || !testing_prompt || allFiles.length < 5 || allFiles.length > 9 || !sd_model || !sd_sampler || !sd_img_width || !sd_img_height || !sd_cfg_scale || !sd_steps || !sd_neg_prompt || !promptIns)) {
       console.log(prompt, sd_model, sd_sampler, sd_img_width, sd_img_height, sd_cfg_scale, sd_steps, sd_neg_prompt, promptIns, sd_clip_guide, promptIns, profileLink, preview_output, engine, testing_prompt, gpt_cat)
 
       return alert('Please fill all fields before moving to next step')
@@ -260,9 +263,9 @@ const Sell: NextPageWithAuth = () => {
 
   if (loading) return <div className='text-3xl m-auto'>Loading...</div>
   return (
-    <div className="grow flex flex-col justify-center items-center py-14 px-20">
+    <div className={`${chatBreakPoint ? 'p-8' : 'py-14 px-20'} grow flex flex-col justify-center items-center `}>
       <StepAction className="w-2/3" current={currentStep} total={steps.length} />
-      <div className="my-10 p-10">
+      <div className={` my-10`}>
         <StepperContext.Provider
           value={
             {
