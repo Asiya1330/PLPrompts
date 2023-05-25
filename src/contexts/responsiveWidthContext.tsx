@@ -9,7 +9,9 @@ export const ResposnsivenessContext = createContext({
     removeSiteName: false,
     setRemoveSiteName: () => null,
     chatBreakPoint: false,
-    setChatBreakPoint: () => null
+    setChatBreakPoint: () => null,
+    profileBreakPoint: false,
+    setProfileBreakPoint: () => null, 
 })
 
 const ResposnsivenessProvider = ({ children }) => {
@@ -17,14 +19,15 @@ const ResposnsivenessProvider = ({ children }) => {
     const [removeSocialIcons, setRemoveSocialIcons] = useState(false);
     const [removeSiteName, setRemoveSiteName] = useState(false);
     const [chatBreakPoint, setChatBreakPoint] = useState(false);
+    const [profileBreakPoint, setProfileBreakPoint] = useState(false);
 
 
 
     useEffect(() => {
         console.log(process.env.NEXT_PUBLIC_BEAPI,
             process.env.NEXT_PUBLIC_LOCALHOST_KEY,
-            process.env.REMOTE_URL,process.env.JWT_SECRET,
-            process.env.NEXT_PUBLIC_EXPRESS_ACCOUNT_LINK,'hehe2 vars');
+            process.env.REMOTE_URL, process.env.JWT_SECRET,
+            process.env.NEXT_PUBLIC_EXPRESS_ACCOUNT_LINK, 'hehe2 vars');
 
         const handleResize = () => {
             const width = window.innerWidth;
@@ -39,6 +42,9 @@ const ResposnsivenessProvider = ({ children }) => {
 
             if (width >= 730) setChatBreakPoint(false)
             else setChatBreakPoint(true)
+
+            if (width >= 520) setProfileBreakPoint(false)
+            else setProfileBreakPoint(true)
         }
         window.addEventListener('resize', handleResize);
         handleResize();
@@ -54,7 +60,8 @@ const ResposnsivenessProvider = ({ children }) => {
         removeSocialIcons,
         setRemoveSocialIcons,
         removeSiteName, setRemoveSiteName,
-        chatBreakPoint, setChatBreakPoint
+        chatBreakPoint, setChatBreakPoint,
+        setProfileBreakPoint, profileBreakPoint
     }
     return (
         <ResposnsivenessContext.Provider value={value}>

@@ -3,12 +3,14 @@
 import CustomSwiper from '@/components/CustomSwiper';
 import { UserContext } from '@/contexts/UserContext';
 import { ChatContactsContext } from '@/contexts/chatContactsContext';
+import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
 import { addChatUrl, addFollowerUrl, getAllPrompts, getBadgesByUserIDUrl, getLikesViewsPurchasesAndRank } from '@/utils/apis';
 import axios from 'axios';
 import { useRouter } from 'next/router'
 import React, { useEffect, useState, useContext } from 'react'
 
 const PublicProfile = () => {
+    const { profileBreakPoint } = useContext(ResposnsivenessContext);
     const [profileOwner, setProfileOwner] = useState();
     const router = useRouter();
     const { currentUser } = useContext(UserContext);
@@ -109,20 +111,19 @@ const PublicProfile = () => {
 
     if (loading) return <div className='m-auto text-3xl'>Loading....</div>
     else return (
-        <div className='m-auto'>
-            <div className="profile-section w-[1062px] m-5">
+        <div className=''>
+            <div className="profile-section max-w-[1062px] mx-auto my-10 px-5">
                 <div className="profile-background-pic">
                     <div className="backgrounf-pic">
                         <img className='w-full h-[195px]' src="https://media.istockphoto.com/id/1323860984/vector/green-background-in-vector-illustration-with-glow-and-lights.jpg?s=612x612&w=0&k=20&c=8IJexeaZOCxSRrNiCCgUvB-dexsy8w9PEF1IF8v4skU=" alt="" />
-
                     </div>
                     <div className="profile-pic-options flex mt-[-50px] justify-between mr-[20px] ml-[20px]">
-                        <img className='w-[100px] h=[100px] rounded-full border-white border-4' src={`${profileOwner?.avatarImage?.length ? profileOwner?.avatarImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'} `} alt="" />
-                        <div className="options">
+                        <img className='w-[100px] h-[100px] rounded-full border-white border-4' src={`${profileOwner?.avatarImage?.length ? profileOwner?.avatarImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'} `} alt="" />
+                        <div className="options flex items-end">
                             {
                                 (profileOwner?._id !== currentUser?._id) && <>
-                                    <button onClick={handleMessage}>Message <span></span></button>
-                                    <button onClick={handleFollow}>Follow <span></span></button>
+                                    <button className="button420" onClick={handleMessage}>Message <span></span></button>
+                                    <button className="button420" onClick={handleFollow}>Follow <span></span></button>
                                 </>
                             }
 
@@ -135,37 +136,49 @@ const PublicProfile = () => {
                         <div className="short-desc">
                             {profileOwner?.description ?? ''}
                         </div>
-                        <div className="views-likes-purchases-rank-joined_date flex flex-row gap-2 align-middle">
-                            <div className="views flex flex-row align-middle justify-center gap-2"><img src="/icons/eye.svg" alt="" />{profileOwner?.totalViews}</div>
-                            <div className="likes flex flex-row align-middle justify-center gap-2"><img src="/icons/heart.svg" alt="" />{profileOwner?.totalLikes}</div>
-                            <div className="purchase flex align-middle justify-center flex-row gap-2"><img src="/icons/tag.svg" alt="" />{profileOwner?.totalPurchases}</div>
-                            <div className="rank flex  align-middle justify-center flex-row gap-2">PromptBase Rank: #{profileOwner?.promptBaseRank}</div>
-                            <div className="joinedDate  align-middle justify-center flex flex-row gap-2">Joined: {(profileOwner?.createdAt && new Date(profileOwner?.createdAt).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                            })) ??
-                                new Date(profileOwner?.updatedAt).toLocaleDateString("en-US", {
+                        <div className={`${profileBreakPoint ? 'flex-col' : 'flex-row'} text-sm views-likes-purchases-rank-joined_date flex  align-middle gap-4`}>
+                            <div className='flex  flex-row gap-4'>
+                                <div className="views flex flex-row align-middle justify-center gap-2 items-center">
+                                    <img className='w-4' src="/icons/eye.svg" alt="" />{profileOwner?.totalViews}
+                                </div>
+                                <div className=" items-center likes flex flex-row align-middle justify-center gap-2"><img className='w-4' src="/icons/heart.svg" alt="" />{profileOwner?.totalLikes}
+                                </div>
+                                <div className=" items-center purchase flex align-middle justify-center flex-row gap-2"><img className='w-4' src="/icons/tag.svg" alt="" />{profileOwner?.totalPurchases}</div>
+                            </div>
+
+                            <div className={`${profileBreakPoint ? 'flex-col' : ' flex-row'} flex  gap-4`}>
+                                {
+                                    ((parseInt(profileOwner?.promptBaseRank)) &&
+                                        <div className=" items-center rank flex  align-middle justify-center flex-row gap-2">PromptBase Rank: #{profileOwner?.promptBaseRank}</div>
+                                    )
+                                }
+                                <div className=" items-center joinedDate  align-middle justify-center flex flex-row gap-2">Joined: {(profileOwner?.createdAt && new Date(profileOwner?.createdAt).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "short",
                                     day: "numeric",
-                                })}</div>
+                                })) ??
+                                    new Date(profileOwner?.updatedAt).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                    })}</div>
+                            </div>
                         </div>
                     </div>
                     <div className="badges-containe flex flex-row align-middle justify-start gap-3 ">
                         {
                             profileOwner?.badges && profileOwner?.badges?.map(({ _id, purchaseCount }) => {
-                                return <div className="badge bg-gray-500 rounded p-1 flex flex-row gap-2 p-2 justify-center align-middle items-center"> <span><img src="/tags/gpt3.png" alt="" /></span> {_id}</div>
+                                return <div className="badge bg-gray-500 rounded flex flex-row gap-2 p-2 justify-center align-middle items-center"> <span><img src="/tags/gpt3.png" alt="" /></span> {_id}</div>
                             })
                         }
 
                     </div>
-                    <div className="reviews-follwoming-followers flex flex-row align-middle justify-start gap-4 mt-3">
+                    <div className="text-sm reviews-follwoming-followers flex flex-row align-middle justify-start gap-4 mt-3">
                         <div className="reviews">No reviews yet</div>
                         <div className="follwing">{profileOwner?.following} Following</div>
                         <div className="followers">{profileOwner?.followers} Followers</div>
                     </div>
-                    <div className="customcharges mt-5">
+                    <div className="customcharges mt-5 text-sm">
                         @{profileOwner?.username} charges $29.99/ custom prompt.
                     </div>
                 </div>
