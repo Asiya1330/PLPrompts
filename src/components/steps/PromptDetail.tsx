@@ -48,8 +48,9 @@ const PromptDetail = ({
           onChange={(e) => setName(e.target.value)}
           className="login-input mb-4 focus:outline-none focus:shadow-outline "
           placeholder="Movie to Emoji Generator"
+          maxLength={60}
         />
-        <label className="italic text-gray-400 ml-auto text-sm">0/40</label>
+        <label className="italic text-gray-400 ml-auto text-sm">{name?.length || 0}/60</label>
       </div>
 
       <div className="w-full flex flex-col gap-y-2">
@@ -67,8 +68,9 @@ const PromptDetail = ({
           onChange={(e) => setDesc(e.target.value)}
           className="login-input mb-4 focus:outline-none focus:shadow-outline "
           placeholder="Converts movie titles into emoji"
+          maxLength={500}
         ></textarea>
-        <label className="italic text-gray-400 ml-auto text-sm">0/500</label>
+        <label className="italic text-gray-400 ml-auto text-sm">{description?.length || 0}/500</label>
       </div>
 
       <div className="w-full flex flex-col gap-y-2">
