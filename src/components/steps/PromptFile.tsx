@@ -100,10 +100,13 @@ const PromptFile = ({
                 rows={5}
                 cols={33}
                 value={prompt}
+                // maxLength={500}
                 onChange={(e) => setPrompt(e.target.value)}
                 className="login-input mb-4 focus:outline-none focus:shadow-outline "
                 placeholder="Converts movie titles into emoji"
               ></textarea>
+              {/* <label className="italic text-gray-400 ml-auto text-sm">{prompt?.length || 0}/500</label> */}
+
             </div>
 
             <div className="w-full flex flex-col gap-y-2">
@@ -136,12 +139,27 @@ const PromptFile = ({
                 value={engine}
                 onChange={(e) => setengine(e.target.value)}
               >
-                <option>text-davinci-003</option>
-                <option>text-davinci-003</option>
-                <option>text-davinci-003</option>
-                <option>text-davinci-003</option>
-                <option>text-davinci-003</option>
-                <option>text-davinci-003</option>
+
+                <option _ngcontent-serverapp-c72="" value="text-davinci-002">text-davinci-002</option>
+                <option _ngcontent-serverapp-c72="" value="text-curie-001">text-curie-001</option>
+                <option _ngcontent-serverapp-c72="" value="text-babbage-001">text-babbage-001</option>
+                <option _ngcontent-serverapp-c72="" value="text-ada-001">text-ada-001</option>
+                <option _ngcontent-serverapp-c72="" value="text-davinci-001">text-davinci-001</option>
+                <option _ngcontent-serverapp-c72="" value="davinci-instruct-beta">davinci-instruct-beta</option>
+                <option _ngcontent-serverapp-c72="" value="davinci">davinci</option>
+                <option _ngcontent-serverapp-c72="" value="curie-instruct-beta">curie-instruct-beta</option>
+                <option _ngcontent-serverapp-c72="" value="curie">curie</option>
+                <option _ngcontent-serverapp-c72="" value="babbage">babbage</option>
+                <option _ngcontent-serverapp-c72="" value="ada">ada</option>
+                <option _ngcontent-serverapp-c72="" value="code-davinci-002">code-davinci-002</option>
+                <option _ngcontent-serverapp-c72="" value="code-davinci-001">code-davinci-001</option>
+                <option _ngcontent-serverapp-c72="" value="code-cushman-001">code-cushman-001</option>
+                <option _ngcontent-serverapp-c72="" value="curie-similarity-fast">curie-similarity-fast</option>
+                <option _ngcontent-serverapp-c72="" value="" className="bg-gray-200" disabled>select below if you select (Chat (ChatGPT)) </option>
+
+                <option _ngcontent-serverapp-c72="" value="gpt-3.5-turbo" selected="true">gpt-3.5-turbo</option>
+                <option _ngcontent-serverapp-c72="" value="gpt-4">gpt-4</option>
+                <option _ngcontent-serverapp-c72="" value="gpt-4-32k" disabled="">gpt-4-32k (coming soon)</option>
 
               </select>
             </div>
@@ -420,12 +438,12 @@ const PromptFile = ({
                 value={sd_model}
                 onChange={(e) => setsd_model(e.target.value)}
               >
-                <option>Stable diffusion-003</option>
-                <option>Stable diffusion-003</option>
-                <option>Stable diffusion-003</option>
-                <option>Stable diffusion-003</option>
-                <option>Stable diffusion-003</option>
-                <option>Stable diffusion-003</option>
+                <option _ngcontent-serverapp-c71="" value="1.4">Stable Diffusion v1.4</option>
+                <option _ngcontent-serverapp-c71="" value="1.5">Stable Diffusion v1.5</option>
+                <option _ngcontent-serverapp-c71="" value="2.0">Stable Diffusion v2.0</option>
+                <option _ngcontent-serverapp-c71="" value="2.0-768">Stable Diffusion v2.0-768</option>
+                <option _ngcontent-serverapp-c71="" value="2.1">Stable Diffusion v2.1</option>
+                <option _ngcontent-serverapp-c71="" value="2.1-768">Stable Diffusion v2.1-768</option>
 
               </select>
             </div>
@@ -438,12 +456,16 @@ const PromptFile = ({
                 value={sd_sampler}
                 onChange={(e) => setsd_sampler(e.target.value)}
               >
-                <option>k_euler</option>
-                <option>k_euler</option>
-                <option>k_euler</option>
-                <option>k_euler</option>
-                <option>k_euler</option>
-                <option>k_euler</option>
+                <option _ngcontent-serverapp-c71="" value="ddim">ddim</option>
+                <option _ngcontent-serverapp-c71="" value="plms">plms</option>
+                <option _ngcontent-serverapp-c71="" value="k_euler" >k_euler</option>
+                <option _ngcontent-serverapp-c71="" value="k_euler_ancestral">k_euler_ancestral</option>
+                <option _ngcontent-serverapp-c71="" value="k_heun">k_heun</option>
+                <option _ngcontent-serverapp-c71="" value="k_dpm_2">k_dpm_2</option>
+                <option _ngcontent-serverapp-c71="" value="k_dpm_2_ancestral">k_dpm_2_ancestral</option>
+                <option _ngcontent-serverapp-c71="" value="k_lms">k_lms</option>
+                <option _ngcontent-serverapp-c71="" value="k_dpmpp_2s_ancestral">k_dpmpp_2s_ancestral</option>
+                <option _ngcontent-serverapp-c71="" value="k_dpmpp_2m">k_dpmpp_2m</option>
               </select>
             </div>
             <div className="flex flex-row  gap-3">
@@ -504,7 +526,7 @@ const PromptFile = ({
               </input>
             </div>
 
-            <div className="checkbox flex flex-col gap-3">
+            <div className="checkbox flex flex-row items-center gap-3">
               <label>CLIP Guidance</label>
               <input value={sd_clip_guide}
                 onChange={(e) => setsd_clip_guide(e.target.value)}

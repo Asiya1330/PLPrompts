@@ -48,7 +48,7 @@ const Sell: NextPageWithAuth = () => {
   const [engine, setengine] = useState('text-davinci-003');
   const [preview_output, setpreview_output] = useState(null);
   const [preview_input, setpreview_input] = useState(null);
-  const [sd_model, setsd_model] = useState('Stable Diffusion v2.0');
+  const [sd_model, setsd_model] = useState('1.4');
   const [sd_sampler, setsd_sampler] = useState('k_euler');
   const [sd_img_width, setsd_img_width] = useState(512);
   const [sd_img_height, setsd_img_height] = useState(512);
