@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { PromptsContext } from '@/contexts/PromptsContext';
 import { UserContext } from '@/contexts/UserContext';
-import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptPurchaseByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
+import { CreateCheckoutSessionUrl, GetPromptFavByUserId, GetPromptPurchaseByUserId, GetPromptViewsByUserId, InsertLikePromptUrl, InsertPurchasePromptUrl, InsertViewPromptUrl, PaymentLink, getUserById, markFeatureUrl, updatePrompt } from '@/utils/apis';
 import axios from 'axios';
 import { isAdmin } from '@/lib/auth';
 import { ResposnsivenessContext } from '@/contexts/responsiveWidthContext';
@@ -19,8 +19,13 @@ export default function SinglePrompt() {
     const [isClicked, setIsClicked] = useState(false);
     const heartImageRef = useRef()
     const {removeSocialIcons} = useContext(ResposnsivenessContext)
-    const { name } = router.query;
+    const { name, amount } = router.query;
+    // console.log(router?.query?.amount, "amount");
+    useEffect(() => {
+      if (router?.query?.amount === '0') {
 
+      }
+    }, [router.query]);    
     useEffect(() => {
         const addPromptViews = async () => {
             if (currentUser?._id && prompt && prompt._id) {
@@ -103,7 +108,7 @@ export default function SinglePrompt() {
             console.log(data, 'dacd');
             if (data.length) return alert('Prompt already bought by you!')
            
-            if (currentUser?._id !== promptUser?._id) {
+            if ((currentUser?._id !== promptUser?._id)) {
                 const response = await axios.post(CreateCheckoutSessionUrl, {
                     userId: currentUser._id,
                     userEmail: currentUser.email,
@@ -111,7 +116,6 @@ export default function SinglePrompt() {
                     stripeCustomerId: currentUser?.stripeCustomerId || null,
                     promptProduct: prompt
                 })
-                console.log(response, ';lololo');
 
                 if (response.data.msg) return alert(response.data.msg)
                 const { data } = response;
@@ -131,18 +135,33 @@ export default function SinglePrompt() {
         }
     }
 
+    const handleFreePrompt = async () =>{
+        if(prompt?._id )
+        {
+            await axios.post(InsertPurchasePromptUrl, {
+                buyerId: currentUser._id,
+                promptId: prompt._id
+            })
+            alert('Prompt Purchased Successfully')
+        }
+    }
+
     if (!promptUser) return <div>Loading...</div>
     else return (
-        <div className={`${!removeSocialIcons ? 'flex-col':'flex-row'} m-10 gap-1 flex `}>
+        <div className={`${!removeSocialIcons ? 'flex-col':'flex-row'} sm:m-10 m-3 gap-1 flex `}>
             {(!prompt) ? 'Loading...'
                 :
                 <>
                     <div className={`${!removeSocialIcons ? 'w-full items-center flex flex-col':'w-[60%]'} leftSide gap-4`}>
-                        <div className="headerImage mb-5">
-                            <img src={prompt.images[0]} alt="" className='min-w-full max-h-[245px]' />
+                        <div className="headerImage mb-5 bg-fixed flex w-full h-[180px] sm:h-[250px] bg-no-repeat " 
+                        >
+                            <img src={prompt.images[0]} alt="" className='min-w-[35%] ' />
+                            <img src={prompt.images[1]} alt="" className='min-w-[30%] ' />
+                            <img src={prompt.images[2]} alt="" className='min-w-[35%]'/>
+
                         </div>
                         <div className={`${!removeSocialIcons ? 'items-center ':'text-start'} promptName m-2 flex  flex-col`}>
-                            <p className={`${!removeSocialIcons ? 'text-center ':'text-start'} text-5xl  relative mb-5 w-80 truncate`}>
+                            <p className={`${!removeSocialIcons ? 'text-center ':'text-start'} text-5xl  relative mb-5`}>
 
                                 {prompt.name} <span className='text-xl text-gray-500 cursor-pointer' title='edit title'></span>
                             </p>
@@ -190,7 +209,7 @@ export default function SinglePrompt() {
                         {/* <Link href={{ pathname: '/payment', query: { amount: prompt.price, promptId: prompt._id } }}> */}
                         {currentUser?._id && (currentUser?._id !== promptUser?._id)
                             && <button
-                                onClick={handlePayment}
+                                onClick={amount === '0' ? handleFreePrompt : handlePayment}
                                 className='getPrompt'>
                                 Get Prompt
                             </button>
