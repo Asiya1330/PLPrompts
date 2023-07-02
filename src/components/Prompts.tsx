@@ -37,7 +37,7 @@ export default function Prompts() {
 
                 { //@ts-ignore
                     myPrompts && myPrompts.map(({ name, price, type, images }: any, idx: number) => (
-                    <PromptCard key={idx} name={name} price={price} tag={type} image={images[0]} />
+                    <PromptCard key={idx} name={name} price={price} tag={type} image={images} />
                 ))}
             </div>
         </div>

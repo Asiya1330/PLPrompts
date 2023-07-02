@@ -66,7 +66,7 @@ const PromptCardExt = ({ name, price, images, idx, type, description, handleAppr
 
     return (
         <div className='flex flex-row gap-3 justify-evenly'>
-            <PromptCard clickable={false} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
+            <PromptCard clickable={false} name={name} price={price} tag={type} image={images.length ? images : null} />
             <div className='details w-[60%] gap-2 flex flex-col align-middle justify-evenly border-gray-300 border-2 p-5 rounded'>
                 <div>
                     <h1>Prompt Description:</h1>

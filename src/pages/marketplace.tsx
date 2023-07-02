@@ -121,7 +121,7 @@ export default function Marketplace() {
 
               { //@ts-ignore
                 filteredPrompts && filteredPrompts?.map(({ name, price, type, images }: any, idx: number) => (
-                  <PromptCard key={idx} name={name} price={price} tag={type} image={images.length ? images[0] : null} />
+                  <PromptCard key={idx} name={name} price={price} tag={type} image={images.length ? images : null} />
                 ))}
             </div>
             {//@ts-ignore

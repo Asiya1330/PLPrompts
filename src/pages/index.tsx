@@ -103,18 +103,18 @@ export default function Home() {
             currentTab === 'feature' ?
               <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                 {featuredPrompts.map(({ name, price, type, images }) => (
-                  <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                  <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images : ''} />
                 ))}
               </div> :
               currentTab === 'trending' ?
                 <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                   {prompts.map(({ name, price, type, images }) => (
-                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images : ''} />
                   ))}
                 </div> :
                 <div className="flex flex-wrap align-middle items-center justify-center gap-x-6 gap-y-8 mb-16">
                   {newestPrompts.map(({ name, price, type, images }) => (
-                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images[0] : ''} />
+                    <PromptCard key={name} name={name} price={price} tag={type} image={images.length ? images : ''} />
                   ))}
                 </div>
           }

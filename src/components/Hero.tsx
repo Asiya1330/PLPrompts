@@ -63,7 +63,7 @@ export default function Hero() {
               tag={fourHighestScoredPrompt?.["GPT"]?.type}
               image={
                 fourHighestScoredPrompt?.["GPT"]?.images?.length
-                  ? fourHighestScoredPrompt["GPT"]?.images[0]
+                  ? fourHighestScoredPrompt["GPT"]?.images
                   : ""
               }
             />
@@ -74,7 +74,7 @@ export default function Hero() {
               tag={fourHighestScoredPrompt?.["Midjourney"]?.type}
               image={
                 fourHighestScoredPrompt?.["Midjourney"]?.images?.length
-                  ? fourHighestScoredPrompt["Midjourney"]?.images[0]
+                  ? fourHighestScoredPrompt["Midjourney"]?.images
                   : ""
               }
             />
@@ -88,7 +88,7 @@ export default function Hero() {
         <div className="flex flex-col bg-white rounded-lg px-3 py-4 max-w-[270px] h-fit justify-center items-center mt-4">
           <img
             src={
-              fourHighestScoredPrompt?.["PromptBase"]?.images[0]
+              fourHighestScoredPrompt?.["PromptBase"]?.images
                 ? fourHighestScoredPrompt?.["PromptBase"]?.images[0]
                 : "/hire/avatar-diffusion2 - Copy.png"
             }
@@ -144,7 +144,7 @@ export default function Hero() {
               tag={fourHighestScoredPrompt?.["DALL-E"]?.type}
               image={
                 fourHighestScoredPrompt?.["DALL-E"]?.images?.length
-                  ? fourHighestScoredPrompt?.["DALL-E"]?.images[0]
+                  ? fourHighestScoredPrompt?.["DALL-E"]?.images
                   : ""
               }
             />
@@ -156,7 +156,7 @@ export default function Hero() {
                 tag={fourHighestScoredPrompt?.["Stable Diffusion"]?.type}
                 image={
                   fourHighestScoredPrompt?.["Stable Diffusion"]?.images?.length
-                    ? fourHighestScoredPrompt["Stable Diffusion"]?.images[0]
+                    ? fourHighestScoredPrompt["Stable Diffusion"]?.images
                     : ""
                 }
               />
